@@ -1,0 +1,8 @@
+__pycache__
+local_tf_states/
+.terraform.lock.hcl
+.env
+.venv_test
+.venv
+.pylintrc
+test_requirements.txt
