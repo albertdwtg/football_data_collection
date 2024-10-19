@@ -1,3 +1,5 @@
+"""Module collecting constants and ENV variables"""
+
 import os
 from dotenv import load_dotenv
 
@@ -5,7 +7,7 @@ load_dotenv()
 
 PROJECT_ID = os.environ["PROJECT_ID"]
 PROJECT_ENV = os.environ["PROJECT_ENV"]
-GCS_BUCKET = f"football_data_collection_{PROJECT_ENV}"
+GCS_BUCKET = f"football_data_collection_{PROJECT_ENV.lower()}"
 
 POSSIBLE_BROWSERS = [
     "chrome99",
@@ -19,6 +21,7 @@ POSSIBLE_BROWSERS = [
     "chrome120",
 ]
 
+# pylint: disable=line-too-long
 POSSIBLE_USER_AGENTS = [
     "Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.2 Safari/537.36",
     "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/28.0.1468.0 Safari/537.36",

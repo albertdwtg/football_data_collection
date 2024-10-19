@@ -6,3 +6,4 @@ local_tf_states/
 .venv
 .pylintrc
 test_requirements.txt
+.*

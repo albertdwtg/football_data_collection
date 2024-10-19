@@ -4,6 +4,13 @@ TF_COMMANDS_FILE := commands/terraform.mk
 PY_COMMANDS_FILE := commands/python.mk
 export ENV
 
+# Dont't print commands
+ifndef VERBOSE
+.SILENT:
+endif
+
+include $(PY_COMMANDS_FILE)
+
 deploy-tf:
 	make -s -f $(TF_COMMANDS_FILE)
 
