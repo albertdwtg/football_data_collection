@@ -15,7 +15,7 @@ def args_validator(request_body: dict):
     """
     mandatory_keys = ["target"]
     for key in mandatory_keys:
-        if key not in request_body.keys():
+        if key not in request_body:
             raise BadRequest(f"'{key}' is a mandatory input key")
 
     possible_targets = ["last_round_season_stats", "round_season_stats"]
@@ -34,7 +34,7 @@ def args_validator(request_body: dict):
     }
 
     for key in mandatory_keys_by_target[request_body["target"]]:
-        if key not in request_body.keys():
+        if key not in request_body:
             raise BadRequest(
                 f"'{key}' is a mandatory input key for target {request_body['target']}"
             )

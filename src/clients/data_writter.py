@@ -1,9 +1,11 @@
 """Module to write clean data into distincts environments"""
 
 import json
-import os
 import logging
+import os
+
 from google.cloud import storage
+
 from constants import GCS_BUCKET, PROJECT_ID
 
 

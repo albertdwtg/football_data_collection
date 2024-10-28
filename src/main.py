@@ -1,11 +1,11 @@
 """Main module that will be called by the cloud function"""
 
 import functions_framework
-from logging_conf import init_logging
-from validator import args_validator
-from exceptions import BadRequest
 
 from clients.data_formatter import DataFormatter
+from exceptions import BadRequest
+from logging_conf import init_logging
+from validator import args_validator
 
 formatter_client = DataFormatter(data_writter_mode="CLOUD")
 init_logging()
