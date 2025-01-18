@@ -1,5 +1,6 @@
 __pycache__
 local_tf_states/
+events_stats/
 .terraform.lock.hcl
 .env
 .venv_test

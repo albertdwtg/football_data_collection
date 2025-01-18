@@ -1,7 +1,14 @@
 """Module to handle input requests parameters"""
 
+import requests
 from utils.exceptions import BadRequest
 
+
+def input_request_checker(request: requests.request):
+    if request.method != "POST":
+        raise BadRequest("POST is the only authorized method")
+    if request.headers.get("Content-Type") != "application/json":
+        raise BadRequest("'application/json' is the only content authorized")
 
 def args_validator(request_body: dict):
     """Function that checks if input request body
