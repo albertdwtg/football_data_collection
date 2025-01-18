@@ -5,6 +5,7 @@ import logging
 import os
 
 from google.cloud import storage
+from tenacity import retry, stop_after_attempt, wait_exponential
 
 from utils.constants import GCS_BUCKET, PROJECT_ID
 
@@ -16,6 +17,11 @@ class DataWritter:
         self.mode = mode
         self.gcs_client = storage.Client(PROJECT_ID)
 
+    @retry(
+        stop = stop_after_attempt(3),
+        wait = wait_exponential(multiplier=3),
+        reraise = True
+    )
     def write_json(
         self,
         json_content: dict,
