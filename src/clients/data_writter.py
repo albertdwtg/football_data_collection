@@ -6,7 +6,7 @@ import os
 
 from google.cloud import storage
 
-from constants import GCS_BUCKET, PROJECT_ID
+from utils.constants import GCS_BUCKET, PROJECT_ID
 
 
 class DataWritter:

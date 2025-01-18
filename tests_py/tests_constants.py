@@ -2,7 +2,7 @@ import sys
 import os
 
 sys.path.append(os.path.abspath("../src"))
-from constants import (
+from utils.constants import (
     GCS_BUCKET, 
     PROJECT_ENV,
     POSSIBLE_BROWSERS,

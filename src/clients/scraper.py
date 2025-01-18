@@ -6,8 +6,8 @@ import string
 
 from curl_cffi import requests
 
-from constants import POSSIBLE_BROWSERS, POSSIBLE_USER_AGENTS, TIMEOUT
-from exceptions import BadResponse
+from utils.constants import POSSIBLE_BROWSERS, POSSIBLE_USER_AGENTS, TIMEOUT
+from utils.exceptions import BadResponse
 
 SUCCESS_STATUS_CODE = 200
 NB_CALLS_BEFORE_ROTATION = 3

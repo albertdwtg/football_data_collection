@@ -3,11 +3,11 @@
 import functions_framework
 
 from clients.data_formatter import DataFormatter
-from exceptions import BadRequest
-from logging_conf import init_logging
-from validator import args_validator
+from utils.exceptions import BadRequest
+from utils.logging_conf import init_logging
+from utils.validator import args_validator
 
-formatter_client = DataFormatter(data_writter_mode="CLOUD")
+formatter_client = DataFormatter(data_writter_mode="LOCAL")
 init_logging()
 
 

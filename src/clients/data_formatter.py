@@ -4,7 +4,7 @@ from datetime import datetime
 
 from clients.data_writter import DataWritter
 from clients.scraper import Scraper
-from constants import API_BASE_URL, REFERENCE_TEAMS
+from utils.constants import API_BASE_URL, REFERENCE_TEAMS
 
 
 class DataFormatter:

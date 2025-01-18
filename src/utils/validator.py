@@ -1,6 +1,6 @@
 """Module to handle input requests parameters"""
 
-from exceptions import BadRequest
+from utils.exceptions import BadRequest
 
 
 def args_validator(request_body: dict):

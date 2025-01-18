@@ -2,7 +2,7 @@
 
 import logging
 
-from constants import PROJECT_ENV
+from utils.constants import PROJECT_ENV
 
 
 def init_logging():
