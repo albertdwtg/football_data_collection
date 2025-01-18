@@ -3,7 +3,7 @@
 import functions_framework
 
 from clients.data_formatter import DataFormatter
-from utils.exceptions import BadRequest
+from utils.exceptions import BadRequest, BadResponse
 from utils.logging_conf import init_logging
 from utils.validator import args_validator, input_request_checker
 
@@ -39,6 +39,8 @@ def run(request):
             )
     except BadRequest as error:
         return f"Bad request : {error}", 400 
+    except BadResponse as error:
+        return f"Bad response : {error}", 400 
     except Exception as error:
         return f"Internal server error : {error}", 500
         
