@@ -5,6 +5,7 @@ import secrets
 import string
 
 from curl_cffi import requests
+from tenacity import retry, stop_after_attempt, wait_exponential
 
 from utils.constants import POSSIBLE_BROWSERS, POSSIBLE_USER_AGENTS, TIMEOUT
 from utils.exceptions import BadResponse
@@ -27,6 +28,11 @@ class Scraper:
         )
         return uuid.lower()
 
+    @retry(
+        stop = stop_after_attempt(3),
+        wait = wait_exponential(multiplier=3),
+        reraise = True
+    )
     def make_call(
         self, method: str, url: str, query_params: dict = None, body: dict = None
     ):
