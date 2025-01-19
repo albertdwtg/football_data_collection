@@ -1,5 +1,7 @@
 export GCP_PROJECT_ID ?= model-zoo-382809
 export GCP_REGION ?= europe-west1
+export GCP_REGION_ID ?= ew1
+export PRODUCT_NAME ?= cdp
 TF_COMMANDS_FILE := commands/terraform.mk
 PY_COMMANDS_FILE := commands/python.mk
 
@@ -9,6 +11,7 @@ ifndef VERBOSE
 endif
 
 include $(PY_COMMANDS_FILE)
+include $(TF_COMMANDS_FILE)
 
 # Description des cibles
 help:
@@ -26,9 +29,3 @@ check-env:
 		echo "[$@] --> ERROR : ENV variable must be 'prd' or 'dev'."; \
 		exit 1; \
 	fi
-
-deploy-tf:
-	make -s -f $(TF_COMMANDS_FILE)
-
-deploy-py:
-	make -s -f $(PY_COMMANDS_FILE)

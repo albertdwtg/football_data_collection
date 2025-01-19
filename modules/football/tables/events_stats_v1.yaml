@@ -1,0 +1,15 @@
+table_id: events_stats
+version: 1
+dataset_id: ${datasets["football_raw"].id}
+description: Table storing raw data about events of games
+deletion_protection: false
+time_partitioning:
+  type: DAY
+require_partition_filter: true
+schema:
+- name: "metadata"
+  type: JSON
+  description: TBD
+- name: "data"
+  type: JSON
+  description: TBD
