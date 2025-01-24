@@ -1,3 +1,4 @@
+---
 table_id: events_stats
 version: 1
 dataset_id: ${datasets["football_raw"].id}
@@ -7,9 +8,9 @@ time_partitioning:
   type: DAY
 require_partition_filter: true
 schema:
-- name: "metadata"
-  type: JSON
-  description: TBD
-- name: "data"
-  type: JSON
-  description: TBD
+  - name: "metadata"
+    type: JSON
+    description: TBD
+  - name: "data"
+    type: JSON
+    description: TBD

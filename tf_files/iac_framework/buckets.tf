@@ -28,7 +28,7 @@ locals {
 
 resource "google_storage_bucket" "buckets" {
   for_each                    = local.buckets_configs
-  name                        = "${var.product_name}_${each.value.base_name}_${var.region_id}_${var.env}"
+  name                        = "${var.product_name}_gcs_${each.value.base_name}_${var.region_id}_${var.env}"
   project                     = var.project
   location                    = try(each.value.content.location, var.region)
   force_destroy               = try(each.value.content.force_destroy, null)
@@ -36,19 +36,23 @@ resource "google_storage_bucket" "buckets" {
   uniform_bucket_level_access = try(each.value.content.uniform_bucket_level_access, null)
   requester_pays              = try(each.value.content.requester_pays, null)
   dynamic "lifecycle_rule" {
-    for_each = flatten(try(each.value.content.lifecycle_rule, []))
+    for_each = try(each.value.content.lifecycle_rule, [])
     content {
       action {
-        type          = try(each.value.action.type, null)
-        storage_class = try(each.value.content.lifecycle_rule.action.storage_class, null)
+        type          = lifecycle_rule.value.action.type
+        storage_class = try(lifecycle_rule.value.action.storage_class, null)
       }
       condition {
-        age                   = try(each.value.content.lifecycle_rule.condition.age, null)
-        created_before        = try(each.value.content.lifecycle_rule.condition.created_before, null)
-        matches_storage_class = try(each.value.content.lifecycle_rule.condition.matches_storage_class, null)
+        age                   = try(lifecycle_rule.value.condition.age, null)
+        created_before        = try(lifecycle_rule.value.condition.created_before, null)
+        matches_storage_class = try(lifecycle_rule.value.condition.matches_storage_class, null)
       }
     }
   }
+  labels = merge(
+    try(each.value.content.labels, null),
+    local.common_labels
+  )
 }
 
 output "buckets" {

@@ -1,0 +1,8 @@
+---
+description: Empty
+source_contents:
+  - to_log:
+      call: sys.log
+      args:
+        data: test
+        severity: ERROR

@@ -13,11 +13,6 @@ endef
 export TFVARS_CONTENT
 
 deploy-tf:
-
-ifndef MODULE
-	@echo '[$@] --> MODULE value must be set'
-	exit 1
-endif
 	@echo '[$@] --> Start Terraform deployment of env > $(ENV)'
 	cd tf_files; \
 		echo "[$@] --> Check terraform syntax"; \
@@ -32,3 +27,16 @@ endif
 		echo "[$@] --> Start Terraform apply"; \
 		terraform apply -var-file=$(TFVARS_FILE) -auto-approve; \
 		rm $(TFVARS_FILE);
+
+yaml-linter:
+	#sudo apt-get install yamllint
+	@echo '[$@] --> Checking yaml syntax'
+	yamllint modules/$(MODULE)
+
+pre-checks:
+ifndef MODULE
+	@echo '[$@] --> MODULE value must be set'
+	exit 1
+endif
+
+deploy-module: pre-checks yaml-linter deploy-tf

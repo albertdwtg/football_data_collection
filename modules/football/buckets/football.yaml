@@ -1,6 +1,7 @@
+---
 force_destroy: false
 lifecycle_rule:
-- action:
-    type: Delete
-  condition:
-    age: 20
+  - action:
+      type: Delete
+    condition:
+      age: 20
