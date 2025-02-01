@@ -1,0 +1,9 @@
+---
+data_source_id: google_cloud_storage
+destination_dataset_id: ${datasets["football_raw"].id}
+params:
+  destination_table_name_template: ${tables["events_stats_v1"].id}
+  write_disposition: APPEND
+  file_format: JSON
+  data_path_template: ${buckets["football"].url}/*
+  delete_soure_files: true

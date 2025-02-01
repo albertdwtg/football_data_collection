@@ -1,9 +1,9 @@
 locals {
-  ds_config_files_set = fileset("../modules/${var.module}/datasets/**", "*.yaml")
+  ds_config_files_set = fileset("../../../modules/${var.module}/${local.resources_folder}/datasets/**", "*.yaml")
 
   ds_config_files_paths = {
     for file in local.ds_config_files_set :
-    trim(file, "../") => "../modules/${var.module}/datasets/${trim(file, "../")}"
+    trim(file, "../") => "../../../modules/${var.module}/${local.resources_folder}/datasets/${trim(file, "../")}"
   }
 
   ds_configs = {
@@ -13,7 +13,7 @@ locals {
       content = yamldecode(templatefile(
         file_path,
         merge(
-          yamldecode(file("../modules/${var.module}/variables.yaml")),
+          yamldecode(file("../../../modules/${var.module}/${local.resources_folder}/variables.yaml")),
           {
             project : var.project
             region : var.region

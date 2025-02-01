@@ -6,4 +6,6 @@ locals {
     "region" : var.region
     "region_id" : var.region_id
   }
+
+  resources_folder = "resources"
 }

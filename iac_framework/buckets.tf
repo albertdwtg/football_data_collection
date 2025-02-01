@@ -1,9 +1,9 @@
 locals {
-  buckets_config_files_set = fileset("../modules/${var.module}/buckets/**", "*.yaml")
+  buckets_config_files_set = fileset("../../../modules/${var.module}/${local.resources_folder}/buckets/**", "*.yaml")
 
   buckets_config_files_paths = {
     for file in local.buckets_config_files_set :
-    trim(file, "../") => "../modules/${var.module}/buckets/${trim(file, "../")}"
+    trim(file, "../") => "../../../modules/${var.module}/${local.resources_folder}/buckets/${trim(file, "../")}"
   }
 
   buckets_configs = {
@@ -13,7 +13,7 @@ locals {
       content = yamldecode(templatefile(
         file_path,
         merge(
-          yamldecode(file("../modules/${var.module}/variables.yaml")),
+          yamldecode(file("../../../modules/${var.module}/${local.resources_folder}/variables.yaml")),
           {
             project : var.project
             region : var.region

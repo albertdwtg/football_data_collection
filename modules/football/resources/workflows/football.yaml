@@ -1,5 +1,4 @@
 ---
-description: Empty
 source_contents:
   - to_log:
       call: sys.log

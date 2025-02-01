@@ -13,6 +13,14 @@ endif
 include $(PY_COMMANDS_FILE)
 include $(TF_COMMANDS_FILE)
 
+ifeq ($(MODULE), base)
+	export TARGET_DIR=base
+	export MODULE_DIR=base
+else
+	export TARGET_DIR = modules/$(MODULE)/infra
+	export MODULE_DIR = modules/$(MODULE)
+endif
+
 # Description des cibles
 help:
 	@echo "Available targets :"

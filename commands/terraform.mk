@@ -1,6 +1,6 @@
 TF_STATE_BUCKET := tf_state_football_data_collection
 export TFVARS_FILE := default.tfvars
-export TF_DATA_DIR := local_tf_states/$(ENV)
+export TF_DATA_DIR := tf_states/$(ENV)
 
 define TFVARS_CONTENT
 region    	 = "$(GCP_REGION)"
@@ -14,12 +14,12 @@ export TFVARS_CONTENT
 
 deploy-tf:
 	@echo '[$@] --> Start Terraform deployment of env > $(ENV)'
-	cd tf_files; \
+	cd $(TARGET_DIR); \
 		echo "[$@] --> Check terraform syntax"; \
 		terraform fmt; \
 		echo "$$TFVARS_CONTENT" > $(TFVARS_FILE); \
 		echo "[$@] --> Start Terraform init"; \
-		terraform init -backend-config="bucket=$(TF_STATE_BUCKET)" -backend-config="prefix=$(ENV)"; \
+		terraform init -backend-config="bucket=$(TF_STATE_BUCKET)" -backend-config="prefix=$(MODULE)/$(ENV)"; \
 		echo "[$@] --> Start Terraform plan"; \
 		terraform plan -var-file=$(TFVARS_FILE); \
 		echo "[$@] --> Start Terraform validate"; \
@@ -30,8 +30,8 @@ deploy-tf:
 
 yaml-linter:
 	#sudo apt-get install yamllint
-	@echo '[$@] --> Checking yaml syntax'
-	yamllint modules/$(MODULE)
+	@echo '[$@] --> Checking yaml syntax in $(MODULE_DIR)'
+	yamllint $(MODULE_DIR)
 
 pre-checks:
 ifndef MODULE
