@@ -31,7 +31,7 @@ def args_validator(request_body: dict):
 
     int_args = ["tournament_id", "season_id", "round"]
     for arg in int_args:
-        if arg in request_body:
+        if arg in request_body and isinstance(request_body[arg], str):
             if request_body[arg].isdigit() is False:
                 raise BadRequest(f"'{arg}' must contain only digits")
 

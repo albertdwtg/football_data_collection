@@ -45,13 +45,10 @@ resource "google_workflows_workflow" "workflows" {
   service_account = google_service_account.execution_sa.id
   name            = "${var.product_name}_wkf_${each.value.base_name}_${var.region_id}_${var.env}"
   description     = "Workflow created in module ${var.module}"
-  call_log_level  = upper(try(each.value.content.call_log_level, "LOG_ALL_CALLS"))
+  call_log_level  = "LOG_ALL_CALLS"
   source_contents = yamlencode(each.value.content.source_contents)
-  labels = merge(
-    try(each.value.content.labels, null),
-    local.common_labels
-  )
-  depends_on = [ google_service_account.execution_sa ]
+  labels          = local.common_labels
+  depends_on      = [google_service_account.execution_sa]
 }
 
 output "workflows" {

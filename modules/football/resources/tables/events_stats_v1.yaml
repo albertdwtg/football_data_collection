@@ -10,7 +10,9 @@ require_partition_filter: true
 schema:
   - name: "metadata"
     type: JSON
+    mode: NULLABLE
     description: TBD
-  - name: "data"
+  - name: "statistics"
     type: JSON
+    mode: REPEATED
     description: TBD
