@@ -17,10 +17,10 @@ def run(request):
     """Entrypoint of the cloud function
     It will handle the incoming request
     Args:
-        request (_type_): _description_
+        request (_type_): Incoming request
 
     Returns:
-        _type_: _description_
+        Tuple: Tuple containing the response and the status code
     """
     try:
         input_request_checker(request=request)

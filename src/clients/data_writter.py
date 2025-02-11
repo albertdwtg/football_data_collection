@@ -54,8 +54,14 @@ class DataWritter:
             )
         logging.info("Content of request %s has been loaded", request_uuid)
 
-    def upload_blob(self, bucket_name: str, destination_blob_name: str, content):
-        """Uploads a file to the bucket."""
+    def upload_blob(self, bucket_name: str, destination_blob_name: str, content: str):
+        """Uploads a file to the bucket.
+
+        Args:
+            bucket_name (str): Name of the bucket
+            destination_blob_name (str): name of the file to upload in the bucket
+            content (str): Content of the file to upload
+        """
         bucket = self.gcs_client.bucket(bucket_name)
         blob = bucket.blob(destination_blob_name)
         blob.upload_from_string(content)

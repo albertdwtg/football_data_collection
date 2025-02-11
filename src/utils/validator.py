@@ -6,6 +6,15 @@ from utils.exceptions import BadRequest
 
 
 def input_request_checker(request: requests.request):
+    """Function that checks if input request is valid
+
+    Args:
+        request (requests.request): request object
+
+    Raises:
+        BadRequest: If request method is not POST
+        BadRequest: If content type is not application/json
+    """
     if request.method != "POST":
         raise BadRequest("POST is the only authorized method")
     if request.headers.get("Content-Type") != "application/json":

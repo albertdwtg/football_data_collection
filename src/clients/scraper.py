@@ -22,7 +22,12 @@ class Scraper:
         self.browser = secrets.choice(POSSIBLE_BROWSERS)
         self.nb_calls = 0
 
-    def _get_request_uuid(self):
+    def _get_request_uuid(self) -> str:
+        """Function to generate a request uuid
+
+        Returns:
+            str: Generated uuid
+        """
         uuid = "".join(
             [secrets.choice(string.ascii_letters + string.digits) for i in range(8)]
         )
@@ -79,6 +84,9 @@ class Scraper:
         return request_uuid, json_response
 
     def _update_attributes(self):
+        """Function to update attributes of the scraper
+        to avoid being blocked by the API
+        """
         if self.nb_calls >= NB_CALLS_BEFORE_ROTATION:
             self.user_agent = secrets.choice(POSSIBLE_USER_AGENTS)
             self.browser = secrets.choice(POSSIBLE_BROWSERS)

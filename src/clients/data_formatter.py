@@ -98,16 +98,17 @@ class DataFormatter:
 
     def get_last_round_of_season(
         self, team_id: int, tournament_id: int, season_id: int
-    ):
-        """_summary_
-
+    ) -> tuple:
+        """Function that returns the last round of a season
+        available in the API
         Args:
-            team_id (int): _description_
-            tournament_id (int): _description_
-            season_id (int): _description_
+            team_id (int): ID of the team to get the round of
+            tournament_id (int): ID of the tournament to get the round of
+            season_id (int): ID of the season to get the round of
 
         Returns:
-            _type_: _description_
+            tuple: Tuple containing the request_uuid and the 
+                    statistics of the last round of the season
         """
         request_uuid, json_response = self.scraper.make_call(
             method="GET",
