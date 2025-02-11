@@ -1,6 +1,7 @@
 """Module to handle input requests parameters"""
 
 import requests
+
 from utils.exceptions import BadRequest
 
 
