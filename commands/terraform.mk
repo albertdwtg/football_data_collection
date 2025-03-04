@@ -3,12 +3,13 @@ export TFVARS_FILE := default.tfvars
 export TF_DATA_DIR := tf_states/$(ENV)
 
 define TFVARS_CONTENT
-region    	 = "$(GCP_REGION)"
-region_id 	 = "$(GCP_REGION_ID)"
-project   	 = "$(GCP_PROJECT_ID)"
-env       	 = "$(ENV)"
-module    	 = "$(MODULE)"
-product_name = "$(PRODUCT_NAME)"
+region    	 	= "$(GCP_REGION)"
+region_id 	 	= "$(GCP_REGION_ID)"
+project   	 	= "$(GCP_PROJECT_ID)"
+env       	 	= "$(ENV)"
+module    	    = "$(MODULE)"
+product_name    = "$(PRODUCT_NAME)"
+zip_source_file = "$(GCF_SOURCE_ZIP)"
 endef
 export TFVARS_CONTENT
 
@@ -71,7 +72,9 @@ deploy-base:
 
 yaml-linter:
 	#sudo apt-get install yamllint
+	yamllint ./iac_framework
 	@echo '[$@] --> Checking yaml syntax in $(MODULE_DIR)'
 	yamllint $(MODULE_DIR)
+
 
 tf-cicd: yaml-linter deploy-tf

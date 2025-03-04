@@ -1,0 +1,73 @@
+---
+bigquery_subworkflow:
+  params:
+    - query
+    - project_id
+    - location
+  steps:
+    - init:
+        assign:
+          - job_id: "wkf_${sys.get_uuid()}"
+          - wkf_id : ${sys.get_env("GOOGLE_CLOUD_WORKFLOW_ID")}
+          # - location: ${sys.get_env("GOOGLE_CLOUD_LOCATION")}
+          - wkf_execution_id: ${sys.get_env("GOOGLE_CLOUD_WORKFLOW_EXECUTION_ID")}
+
+    - start_bigquery_job:
+        try:
+          call: googleapis.bigquery.v2.jobs.insert
+          args:
+            projectId: ${project_id}
+            body:
+              configuration:
+                query:
+                  query: ${query}
+                  useLegacySql: false
+              jobReference:
+                jobId: ${job_id}
+                location: ${location}
+                projectId: ${project_id}
+              labels:
+                workflow_id: ${wkf_id}
+                workflow_execution_id: ${wkf_execution_id}
+          result: job
+        except:
+          as: e
+          steps:
+            - log_error:
+                call: sys.log
+                args:
+                  severity: "ERROR"
+                  message: ${e.body.error.message}
+                  data:
+                    error_code: ${e.code}
+                    error_details: ${e.body.error.errors}
+                return: "BigQuery job failed"
+
+    - check_job_status:
+        call: googleapis.bigquery.v2.jobs.get
+        args:
+          projectId: ${project_id}
+          jobId: ${job.jobReference.jobId}
+        result: job_status
+
+    - wait_for_job_completion:
+        switch:
+          - condition: ${not job_status.status.state == "DONE"}
+            next: wait_and_retry
+        next: get_query_results
+
+    - wait_and_retry:
+        call: sys.sleep
+        args:
+          seconds: 5
+        next: check_job_status
+
+    - get_query_results:
+        call: googleapis.bigquery.v2.jobs.getQueryResults
+        args:
+          projectId: ${project_id}
+          jobId: ${job.jobReference.jobId}
+        result: query_results
+
+    - return_results:
+        return: ${query_results}

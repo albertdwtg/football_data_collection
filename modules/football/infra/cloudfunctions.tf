@@ -2,18 +2,14 @@ data "google_storage_bucket" "gcf_artifacts" {
   name = "${var.product_name}_gcs_gcf_artifacts_${var.region_id}_${var.env}"
 }
 
-data "archive_file" "cf_code_zip" {
-  type        = "zip"
-  source_dir  = "../gcf_code/src"
-  output_path = "../files/init.zip"
-  #   excludes    = ["modules/${var.module}/gcf_code/src/.venv_test/"]
+locals {
+  sha_gcf_source = sha1(join("", [for f in fileset("../gcf_code/src", "*") : filesha1("../gcf_code/src/${f}")]))
 }
 
-resource "google_storage_bucket_object" "zip_file" {
-  # Append file MD5 to force bucket to be recreated
-  name   = "gcf_${var.module}_${data.archive_file.cf_code_zip.output_md5}.zip"
+resource "google_storage_bucket_object" "gcf_source_zip" {
+  name   = "${var.module}/gcf_source_${local.sha_gcf_source}.zip"
   bucket = data.google_storage_bucket.gcf_artifacts.name
-  source = data.archive_file.cf_code_zip.output_path
+  source = "../gcf_code/${var.zip_source_file}" # Add path to the zipped function source code
 }
 
 resource "google_cloudfunctions2_function" "function" {
@@ -27,14 +23,22 @@ resource "google_cloudfunctions2_function" "function" {
     source {
       storage_source {
         bucket = data.google_storage_bucket.gcf_artifacts.name
-        object = google_storage_bucket_object.zip_file.name
+        object = google_storage_bucket_object.gcf_source_zip.name
       }
     }
   }
 
   service_config {
-    max_instance_count = 1
-    available_memory   = "256M"
-    timeout_seconds    = 60
+    max_instance_count             = 1
+    available_memory               = "256M"
+    timeout_seconds                = 60
+    ingress_settings               = "ALLOW_INTERNAL_ONLY"
+    all_traffic_on_latest_revision = true
+    service_account_email          = module.iac_framework.execution_sa
+
+    environment_variables = {
+      PROJECT_ID  = var.project
+      PROJECT_ENV = var.env
+    }
   }
 }

@@ -6,6 +6,7 @@ export IS_PR ?= false
 export BASE_MODULE_NAME = base
 export GCF_CODE_FOLDER ?= modules/$(MODULE)/gcf_code
 export GCF_SOURCE_CODE ?= src
+export GCF_SOURCE_ZIP ?= zip_source.zip
 export TARGET_DIR=modules/$(MODULE)/infra
 export MODULE_DIR=modules/$(MODULE)
 TF_COMMANDS_FILE := commands/terraform.mk
@@ -44,7 +45,12 @@ endif
 pre-checks:
 	@echo '[$@] --> EMPTY'
 
-deploy: pre-checks py-cicd tf-cicd
+clean-cicd:
+	echo '[$@] --> Remove files at the end of the CICD process'
+	cd $(GCF_CODE_FOLDER)/$(GCF_SOURCE_CODE); \
+		rm -f ../$(GCF_SOURCE_ZIP);
+
+deploy: pre-checks py-cicd tf-cicd clean-cicd
 
 # Description des cibles
 help:

@@ -40,3 +40,7 @@ resource "google_storage_bucket_iam_member" "execution_sa_bucket_roles" {
   role   = each.value.role
   member = "serviceAccount:${google_service_account.execution_sa.email}"
 }
+
+output "execution_sa" {
+  value = google_service_account.execution_sa.email
+}

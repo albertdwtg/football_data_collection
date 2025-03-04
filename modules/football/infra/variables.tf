@@ -23,6 +23,11 @@ variable "region_id" {
   description = "Region trigram where to deploy resources"
 }
 
+variable "zip_source_file" {
+  type        = string
+  description = "Zip source file name of the gcf source code"
+}
+
 variable "env" {
   type        = string
   description = "Name of the current environment"
