@@ -7,8 +7,12 @@ export BASE_MODULE_NAME = base
 export GCF_CODE_FOLDER ?= modules/$(MODULE)/gcf_code
 export GCF_SOURCE_CODE ?= src
 export GCF_SOURCE_ZIP ?= zip_source.zip
-export TARGET_DIR=modules/$(MODULE)/infra
-export MODULE_DIR=modules/$(MODULE)
+export GCF_CHECKSUM := .checksum.txt
+
+export EXECUTION_VARS_FOLDER = .execution_vars
+export TF_DIR_LOCATION := $(EXECUTION_VARS_FOLDER)/TF_DIR.txt
+export MODULE_DIR_LOCATION := $(EXECUTION_VARS_FOLDER)/MODULE_DIR.txt
+
 TF_COMMANDS_FILE := commands/terraform.mk
 PY_COMMANDS_FILE := commands/python.mk
 
@@ -32,25 +36,31 @@ ifneq ($(filter dev prd,$(ENV)),$(ENV))
 	@echo '[$@] --> ENV must be 'dev' or 'prd''
 	exit 1
 endif
-ifeq ($(MODULE), $(BASE_MODULE_NAME))
-	echo "[$@] --> BASE"; 
-	export TARGET_DIR=$(BASE_MODULE_NAME);
-	export MODULE_DIR=$(BASE_MODULE_NAME);
-else 
-	echo "[$@] --> COMMON"; 
-	export TARGET_DIR=modules/$(MODULE)/infra; 
-	export MODULE_DIR=modules/$(MODULE); 
-endif
 
-pre-checks:
-	@echo '[$@] --> EMPTY'
+vars-build:
+	@echo '[$@] --> Running vars-build'
+	mkdir -p $(EXECUTION_VARS_FOLDER);
+	@if [ "$(MODULE)" = "$(BASE_MODULE_NAME)" ]; then \
+		echo "$(BASE_MODULE_NAME)" > $(TF_DIR_LOCATION); \
+		echo "$(BASE_MODULE_NAME)" > $(MODULE_DIR_LOCATION); \
+	else \
+		echo "modules/$(MODULE)/infra" > $(TF_DIR_LOCATION); \
+		echo "modules/$(MODULE)" > $(MODULE_DIR_LOCATION); \
+	fi
+
 
 clean-cicd:
 	echo '[$@] --> Remove files at the end of the CICD process'
-	cd $(GCF_CODE_FOLDER)/$(GCF_SOURCE_CODE); \
-		rm -f ../$(GCF_SOURCE_ZIP);
+	rm -rf $(EXECUTION_VARS_FOLDER);
+	rm -rf $(shell cat $(TF_DIR_LOCATION))/$(TF_DATA_DIR);
+	if [ -d "$(GCF_CODE_FOLDER)/$(GCF_SOURCE_CODE)" ]; then \
+		cd $(GCF_CODE_FOLDER)/$(GCF_SOURCE_CODE); \
+			rm -f ../$(GCF_SOURCE_ZIP); \
+			rm -f ../$(GCF_CHECKSUM); \
+	fi
 
-deploy: pre-checks py-cicd tf-cicd clean-cicd
+
+deploy: vars-build py-cicd tf-cicd clean-cicd
 
 # Description des cibles
 help:

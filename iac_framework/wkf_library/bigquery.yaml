@@ -8,9 +8,10 @@ bigquery_subworkflow:
     - init:
         assign:
           - job_id: "wkf_${sys.get_uuid()}"
-          - wkf_id : ${sys.get_env("GOOGLE_CLOUD_WORKFLOW_ID")}
+          - wkf_id: ${sys.get_env("GOOGLE_CLOUD_WORKFLOW_ID")}
           # - location: ${sys.get_env("GOOGLE_CLOUD_LOCATION")}
-          - wkf_execution_id: ${sys.get_env("GOOGLE_CLOUD_WORKFLOW_EXECUTION_ID")}
+          - wkf_execution_id: |-
+              ${sys.get_env("GOOGLE_CLOUD_WORKFLOW_EXECUTION_ID")}
 
     - start_bigquery_job:
         try:

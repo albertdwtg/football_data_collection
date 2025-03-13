@@ -1,6 +1,7 @@
 __pycache__
 local_tf_states/
 tf_states/
+tf_state/
 events_stats/
 .terraform.lock.hcl
 .env

@@ -5,6 +5,7 @@ TEST_REQUIREMENTS_FILE = test_requirements.txt
 VENV_TEST_DIR = .venv_test
 VENV_DIR = .venv
 RUFF_CONFIG_FILE = .ruff.toml
+export GCS_BUCKET_SOURCE_CODE = $(PRODUCT_NAME)_gcs_gcf_artifacts_$(GCP_REGION_ID)_$(ENV)
 
 # .env file content for python project
 define ENV_VARIABLES
@@ -15,7 +16,7 @@ export ENV_VARIABLES
 
 # test requirements file content
 define TEST_REQUIREMENTS
-pytest
+pytest==8.3.5
 ruff==0.7.1
 endef
 export TEST_REQUIREMENTS
@@ -41,6 +42,11 @@ select = [
 ]
 endef
 export RUFF_CONFIG
+
+#This target must be run in first
+create-checksum:
+	echo '[$@] --> Create checksum of the source code'
+	find $(GCF_CODE_FOLDER)/$(GCF_SOURCE_CODE) -type f -print0 | sort -z | xargs -0 sha1sum | sha1sum | head -c 40 > $(GCF_CODE_FOLDER)/$(GCF_CHECKSUM)
 
 # Check if all dependencies have a fixed version
 check-requirements:
@@ -76,8 +82,8 @@ zip-source:
 	echo '[$@] --> Create zip of the source code'
 	cd $(GCF_CODE_FOLDER)/$(GCF_SOURCE_CODE); \
 		zip -r ../$(GCF_SOURCE_ZIP) . -x ./$(VENV_TEST_DIR)/\* ./.ruff_cache/\*; \
-		# gsutil cp ../$(GCF_SOURCE_ZIP) gs://$(PRODUCT_NAME)_gcs_gcf_artifacts_$(GCP_REGION_ID)_$(ENV)/$(MODULE)/; \
-		# rm -f ../$(GCF_SOURCE_ZIP);
+		echo '[$@] --> copying into gs://$(GCS_BUCKET_SOURCE_CODE)/$(MODULE)/$(shell cat $(GCF_CODE_FOLDER)/$(GCF_CHECKSUM)).zip'; \
+		gsutil cp ../$(GCF_SOURCE_ZIP) gs://$(GCS_BUCKET_SOURCE_CODE)/$(MODULE)/$(shell cat $(GCF_CODE_FOLDER)/$(GCF_CHECKSUM)).zip; \
 
 # Remove files created during py-checks
 clean-py-files:
@@ -89,12 +95,12 @@ clean-py-files:
 		rm -f $(TEST_REQUIREMENTS_FILE);
 
 # All operations in order
-py-testing: check-requirements py-checks clean-py-files zip-source
+py-operations: create-checksum check-requirements py-checks clean-py-files zip-source
 
 py-cicd:
 	if [ -d $(GCF_CODE_FOLDER) ]; then \
 		if [ -d $(GCF_CODE_FOLDER)/$(GCF_SOURCE_CODE) ]; then \
-			$(MAKE) py-testing ENV=$(ENV) MODULE=$(MODULE); \
+			$(MAKE) py-operations ENV=$(ENV) MODULE=$(MODULE); \
 		else \
 			echo "[$@] --> No python folder found, $(GCF_SOURCE_CODE) was not found inside $(GCF_CODE_FOLDER)"; \
 			exit 1; \

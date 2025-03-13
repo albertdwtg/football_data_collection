@@ -31,3 +31,8 @@ variable "env" {
     error_message = "Provide a correct env value, can be 'dev' or 'prd'"
   }
 }
+
+variable "gcs_bucket_source_code" {
+  type        = string
+  description = "GCS bucket containing the GCF source code"
+}
