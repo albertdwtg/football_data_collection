@@ -1,7 +1,3 @@
-data "google_storage_bucket" "gcf_artifacts" {
-  name = "${var.product_name}_gcs_gcf_artifacts_${var.region_id}_${var.env}"
-}
-
 resource "google_cloudfunctions2_function" "function" {
   name        = "${var.product_name}_gcf_${var.module}_${var.region_id}_${var.env}"
   location    = var.region
@@ -12,7 +8,6 @@ resource "google_cloudfunctions2_function" "function" {
     entry_point = "run" # Set the entry point 
     source {
       storage_source {
-        # bucket = data.google_storage_bucket.gcf_artifacts.name
         bucket = var.gcs_bucket_source_code
         object = "${var.module}/${file("../${var.gcf_code_folder}/${var.gcf_checksum}")}.zip"
       }
