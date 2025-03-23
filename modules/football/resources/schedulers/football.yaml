@@ -7,5 +7,5 @@ http_target:
   uri: "http://example.com"
   headers:
     Content-Type: application/json
-  # oidc_token:
-  #   service_account_email: "empty@email.com"
+# oidc_token:
+#   service_account_email: "empty@email.com"

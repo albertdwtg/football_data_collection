@@ -1,10 +1,12 @@
 SHELL := /bin/bash
 GCF_TESTS_FOLDER ?= tests_py
 REQUIREMENTS_FILE = requirements.txt
+BASE_REQUIREMENTS_FILE = $(ROOT)/commands/configs/py_requirements.txt
+# File that will contain all requirements
 TEST_REQUIREMENTS_FILE = test_requirements.txt
 VENV_TEST_DIR = .venv_test
 VENV_DIR = .venv
-RUFF_CONFIG_FILE = .ruff.toml
+RUFF_CONFIG_FILE =  $(ROOT)/commands/configs/ruff.toml
 export GCS_BUCKET_SOURCE_CODE = $(PRODUCT_NAME)_gcs_gcf_artifacts_$(GCP_REGION_ID)_$(ENV)
 
 # .env file content for python project
@@ -14,39 +16,10 @@ PROJECT_ENV = $(ENV)
 endef
 export ENV_VARIABLES
 
-# test requirements file content
-define TEST_REQUIREMENTS
-pytest==8.3.5
-ruff==0.7.1
-endef
-export TEST_REQUIREMENTS
-
-# config file for ruff python linter
-define RUFF_CONFIG
-[lint]
-select = [
-    # pycodestyle
-    "E",
-    # Pyflakes
-    "F",
-    # pyupgrade
-    "UP",
-    # flake8-bugbear
-    "B",
-    # isort
-    "I",
-	#pylint
-	"PL",
-	#flake8-bandit
-	"S",
-]
-endef
-export RUFF_CONFIG
-
 #This target must be run in first
 create-checksum:
 	echo '[$@] --> Create checksum of the source code'
-	find $(GCF_CODE_FOLDER)/$(GCF_SOURCE_CODE) -type f -print0 | sort -z | xargs -0 sha1sum | sha1sum | head -c 40 > $(GCF_CODE_FOLDER)/$(GCF_CHECKSUM)
+	find $(GCF_CODE_FOLDER)/$(GCF_SOURCE_CODE) -type f \( -name "*.py" -o -name "*.txt" \) -print0 | sort -z | xargs -0 sha1sum | sha1sum | head -c 40 > $(GCF_CODE_FOLDER)/$(GCF_CHECKSUM)
 
 # Check if all dependencies have a fixed version
 check-requirements:
@@ -63,20 +36,21 @@ py-checks:
 	cd $(GCF_CODE_FOLDER)/$(GCF_SOURCE_CODE); \
 		echo "$$ENV_VARIABLES" > .env; \
 		echo "[$@] --> Create test requirements"; \
-		echo "$$TEST_REQUIREMENTS" > $(TEST_REQUIREMENTS_FILE); \
+		cat $(BASE_REQUIREMENTS_FILE) > $(TEST_REQUIREMENTS_FILE); \
 		cat $(REQUIREMENTS_FILE) >> $(TEST_REQUIREMENTS_FILE); \
-		python3 -m venv $(VENV_TEST_DIR); \
-		source $(VENV_TEST_DIR)/bin/activate; \
+		python3 -m venv ../$(VENV_TEST_DIR); \
+		source ../$(VENV_TEST_DIR)/bin/activate; \
 		echo "[$@] --> Install test requirements"; \
-		pip install -r $(TEST_REQUIREMENTS_FILE); \
-		echo "$$RUFF_CONFIG" > $(RUFF_CONFIG_FILE); \
-		$(VENV_TEST_DIR)/bin/ruff check --config=$(RUFF_CONFIG_FILE);\
+		pip install -r $(TEST_REQUIREMENTS_FILE) --quiet; \
+		echo "[$@] --> Run ruff linter"; \
+		../$(VENV_TEST_DIR)/bin/ruff check --config=$(RUFF_CONFIG_FILE);\
 		if [ -d "../$(GCF_TESTS_FOLDER)" ]; then \
 			echo "[$@] --> Run unit tests"; \
 			python3 -m pytest -q ../$(GCF_TESTS_FOLDER)/*;\
 		else \
 			echo "[$@] --> No unit tests to run"; \
-		fi
+		fi; \
+		deactivate; \
 
 zip-source:
 	echo '[$@] --> Create zip of the source code'
@@ -91,7 +65,6 @@ clean-py-files:
 	cd $(GCF_CODE_FOLDER)/$(GCF_SOURCE_CODE); \
 		rm -f .env;\
 		find . -type d -name "__pycache__" -exec rm -r {} +;\
-		rm -f $(RUFF_CONFIG_FILE);\
 		rm -f $(TEST_REQUIREMENTS_FILE);
 
 # All operations in order

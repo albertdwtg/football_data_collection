@@ -4,14 +4,17 @@ export GCP_REGION_ID ?= ew1
 export PRODUCT_NAME ?= cdp
 export IS_PR ?= false
 export BASE_MODULE_NAME = base
-export GCF_CODE_FOLDER ?= modules/$(MODULE)/gcf_code
+export MODULES_REPO = modules
+export GCF_CODE_FOLDER ?= $(MODULES_REPO)/$(MODULE)/gcf_code
 export GCF_SOURCE_CODE ?= src
 export GCF_SOURCE_ZIP ?= zip_source.zip
 export GCF_CHECKSUM := .checksum.txt
+export ROOT := $(shell pwd)
 
 export EXECUTION_VARS_FOLDER = .execution_vars
 export TF_DIR_LOCATION := $(EXECUTION_VARS_FOLDER)/TF_DIR.txt
 export MODULE_DIR_LOCATION := $(EXECUTION_VARS_FOLDER)/MODULE_DIR.txt
+export ALL_MODULES_LOCATION := $(EXECUTION_VARS_FOLDER)/ALL_MODULES.txt
 
 TF_COMMANDS_FILE := commands/terraform.mk
 PY_COMMANDS_FILE := commands/python.mk
@@ -40,14 +43,14 @@ endif
 vars-build:
 	@echo '[$@] --> Running vars-build'
 	mkdir -p $(EXECUTION_VARS_FOLDER);
+	find $(MODULES_REPO) -type d -name "infra" -exec sh -c 'for dir do basename "$$(dirname "$$dir")"; done' sh {} + | sort | uniq | paste -sd, - > $(ALL_MODULES_LOCATION);
 	@if [ "$(MODULE)" = "$(BASE_MODULE_NAME)" ]; then \
 		echo "$(BASE_MODULE_NAME)" > $(TF_DIR_LOCATION); \
 		echo "$(BASE_MODULE_NAME)" > $(MODULE_DIR_LOCATION); \
 	else \
-		echo "modules/$(MODULE)/infra" > $(TF_DIR_LOCATION); \
-		echo "modules/$(MODULE)" > $(MODULE_DIR_LOCATION); \
+		echo "$(MODULES_REPO)/$(MODULE)/infra" > $(TF_DIR_LOCATION); \
+		echo "$(MODULES_REPO)/$(MODULE)" > $(MODULE_DIR_LOCATION); \
 	fi
-
 
 clean-cicd:
 	echo '[$@] --> Remove files at the end of the CICD process'

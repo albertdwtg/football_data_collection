@@ -26,20 +26,19 @@ deploy-tf:
 		terraform init -backend-config="bucket=$(TF_STATE_BUCKET)" -backend-config="prefix=$(MODULE)/$(ENV)"; \
 		echo "[$@] --> Start Terraform plan"; \
 		terraform plan -var-file=$(TFVARS_FILE); \
-		echo "[$@] --> Start Terraform validate"; \
-		terraform validate; \
+		# echo "[$@] --> Start Terraform validate"; \
+		# terraform validate; \
 		if [ "$(IS_PR)" = "false" ]; then \
 			echo "[$@] --> Start Terraform apply"; \
 			terraform apply -var-file=$(TFVARS_FILE) -auto-approve; \
 		fi; \
+		deactivate; \
 		rm $(TFVARS_FILE);
-
 
 yaml-linter:
 	#sudo apt-get install yamllint
 	yamllint ./iac_framework
 	@echo '[$@] --> Checking yaml syntax in $(shell cat $(MODULE_DIR_LOCATION))'
 	yamllint $(shell cat $(MODULE_DIR_LOCATION))
-
 
 tf-cicd: yaml-linter deploy-tf

@@ -1,6 +1,7 @@
 """Module to handle response from specific API"""
 
 from datetime import datetime
+from typing import Optional
 
 from clients.data_writter import DataWritter
 from clients.scraper import Scraper
@@ -72,7 +73,7 @@ class DataFormatter:
         )
         return request_uuid, json_response
 
-    def get_season_ids_by_team(self, team_id: int, league_name: str = None):
+    def get_season_ids_by_team(self, team_id: int, league_name: Optional[str] = None):
         """_summary_
 
         Args:
@@ -107,7 +108,7 @@ class DataFormatter:
             season_id (int): ID of the season to get the round of
 
         Returns:
-            tuple: Tuple containing the request_uuid and the 
+            tuple: Tuple containing the request_uuid and the
                     statistics of the last round of the season
         """
         request_uuid, json_response = self.scraper.make_call(
@@ -136,7 +137,7 @@ class DataFormatter:
         return request_uuid, json_response
 
     def load_round_statistics(
-        self, tournament_id: int, season_id: int, round_id: int = None
+        self, tournament_id: int, season_id: int, round_id: Optional[int] = None
     ):
         """_summary_
 

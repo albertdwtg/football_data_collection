@@ -3,7 +3,7 @@
 import functions_framework
 
 from clients.data_formatter import DataFormatter
-from utils.exceptions import BadRequest, BadResponse
+from utils.exceptions import BadRequestError, BadResponseError, InternalServerError
 from utils.logging_conf import init_logging
 from utils.validator import args_validator, input_request_checker
 
@@ -37,11 +37,11 @@ def run(request):
                 season_id=request_body["season_id"],
                 round_id=request_body["round"],
             )
-    except BadRequest as error:
-        return f"Bad request : {error}", 400 
-    except BadResponse as error:
-        return f"Bad response : {error}", 400 
-    except Exception as error:
+    except BadRequestError as error:
+        return f"Bad request : {error}", 400
+    except BadResponseError as error:
+        return f"Bad response : {error}", 400
+    except InternalServerError as error:
         return f"Internal server error : {error}", 500
-        
+
     return "OK", 200

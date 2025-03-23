@@ -3,6 +3,7 @@
 import json
 import logging
 import os
+from typing import Optional
 
 from google.cloud import storage
 from tenacity import retry, stop_after_attempt, wait_exponential
@@ -27,7 +28,7 @@ class DataWritter:
         json_content: dict,
         directory: str,
         request_uuid: str,
-        metadata: dict = None,
+        metadata: Optional[dict] = None,
     ):
         """Function to write a dict into a JSON file
 

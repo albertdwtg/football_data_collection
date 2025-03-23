@@ -3,12 +3,13 @@
 import logging
 import secrets
 import string
+from typing import Optional
 
 from curl_cffi import requests
 from tenacity import retry, stop_after_attempt, wait_exponential
 
 from utils.constants import POSSIBLE_BROWSERS, POSSIBLE_USER_AGENTS, TIMEOUT
-from utils.exceptions import BadResponse
+from utils.exceptions import BadResponseError
 
 SUCCESS_STATUS_CODE = 200
 NB_CALLS_BEFORE_ROTATION = 3
@@ -39,7 +40,8 @@ class Scraper:
         reraise = True
     )
     def make_call(
-        self, method: str, url: str, query_params: dict = None, body: dict = None
+        self, method: str, url: str,
+        query_params: Optional[dict] = None, body: Optional[dict] = None
     ):
         """Function making HTTP request and handling JSON response
 
@@ -50,7 +52,7 @@ class Scraper:
             body (dict, optional): additional request body. Defaults to None.
 
         Raises:
-            BadResponse: If response is not what is expected
+            BadResponseError: If response is not what is expected
 
         Returns:
             _type_: _description_
@@ -78,9 +80,9 @@ class Scraper:
             if response.headers["content-type"] == "application/json":
                 json_response = response.json()
         elif response.status_code != SUCCESS_STATUS_CODE and "error" in response.json():
-            raise BadResponse(f"{response.json()['error']}")
+            raise BadResponseError(f"{response.json()['error']}")
         else:
-            raise BadResponse(f"Bad response : {response.text}")
+            raise BadResponseError(f"Bad response : {response.text}")
         return request_uuid, json_response
 
     def _update_attributes(self):
