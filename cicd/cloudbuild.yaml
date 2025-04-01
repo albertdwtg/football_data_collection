@@ -3,7 +3,7 @@ steps:
   - name: 'bash'
     args: ['-c', 'echo "Ceci est une commande shell exécutée par Cloud Build"']
   - name: 'bash'
-    args: ['ENV=dev', 'MODULE=football', 'task', 'deploy']
+    args: ['-c', 'ENV=dev', 'MODULE=football', 'task', 'deploy']
 
 # options:
 #   substitution_option: 'ALLOW_LOOSE'
