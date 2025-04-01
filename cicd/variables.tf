@@ -23,11 +23,6 @@ variable "region_id" {
   description = "Region trigram where to deploy resources"
 }
 
-variable "zip_source_file" {
-  type        = string
-  description = "Zip source file name of the gcf source code"
-}
-
 variable "env" {
   type        = string
   description = "Name of the current environment"
@@ -37,17 +32,7 @@ variable "env" {
   }
 }
 
-variable "gcf_checksum" {
+variable "all_modules" {
   type        = string
-  description = "Checksum of the GCF source code"
-}
-
-variable "gcf_code_folder" {
-  type        = string
-  description = "Name of the folder containing the GCF source code"
-}
-
-variable "gcs_bucket_source_code" {
-  type        = string
-  description = "GCS bucket containing the GCF source code"
+  description = "String representation of a list containing all the modules, separated by a comma"
 }

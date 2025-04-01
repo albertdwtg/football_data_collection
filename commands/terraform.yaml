@@ -1,0 +1,52 @@
+version: '3'
+
+tasks:
+  deploy-tf:
+    desc: Start Terraform deployment of a module in a specific env
+    internal: true
+    cmds:
+      - echo '[{{.TASK}}] --> Start Terraform deployment of module {{.MODULE}} in env {{.ENV}}'
+      - |
+        cd $(cat {{.TF_DIR_LOCATION}})
+        echo "[{{.TASK}}] --> Check terraform syntax"
+        terraform fmt
+        ALL_MODULES=$(cat {{.ROOT}}/{{.ALL_MODULES_LOCATION}})
+        cat <<EOF > {{.TFVARS_FILE}}
+        region          = "{{.GCP_REGION}}"
+        region_id       = "{{.GCP_REGION_ID}}"
+        project         = "{{.GCP_PROJECT_ID}}"
+        env             = "{{.ENV}}"
+        module          = "{{.MODULE}}"
+        product_name    = "{{.PRODUCT_NAME}}"
+        gcf_checksum    = "{{.GCF_CHECKSUM}}"
+        gcf_code_folder = "{{.GCF_CODE_FOLDER_BASENAME}}"
+        zip_source_file = "{{.GCF_SOURCE_ZIP}}"
+        all_modules     = "${ALL_MODULES}"
+        gcs_bucket_source_code = "{{.GCS_BUCKET_SOURCE_CODE}}"
+        EOF
+
+        echo "[{{.TASK}}] --> Start Terraform init"
+        terraform init -backend-config="bucket={{.TF_STATE_BUCKET}}" -backend-config="prefix={{.MODULE}}/{{.ENV}}"
+        echo "[{{.TASK}}] --> Start Terraform plan"
+        terraform plan -var-file={{.TFVARS_FILE}}
+        # echo "[{{.TASK}}] --> Start Terraform validate"
+        # terraform validate
+        if [ "{{.IS_PR}}" = "false" ]; then
+          echo "[{{.TASK}}] --> Start Terraform apply"
+          terraform apply -var-file={{.TFVARS_FILE}} -auto-approve
+        fi
+
+  yaml-linter:
+    desc: Check yaml syntax
+    internal: true
+    cmds:
+      - yamllint ./iac_framework
+      - eval "echo '[{{.TASK}}] --> Checking yaml syntax in $(cat {{.MODULE_DIR_LOCATION}})'"
+      - yamllint $(cat {{.MODULE_DIR_LOCATION}})
+
+  tf-cicd:
+    desc: Run linter and deployment of infra
+    internal: true
+    cmds:
+      - task: yaml-linter
+      - task: deploy-tf

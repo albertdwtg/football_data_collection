@@ -1,0 +1,134 @@
+version: '3'
+silent: true
+# method: timestamp
+
+env:
+  TF_DATA_DIR: .terraform/
+
+vars:
+  # Input params
+  IS_PR: '{{default "false" .IS_PR}}'
+
+  # Constants
+  GCP_PROJECT_ID: model-zoo-382809
+  GCP_REGION: europe-west1
+  GCP_REGION_ID: ew1
+  PRODUCT_NAME: cdp
+  BASE_MODULE_NAME: base
+  CICD_MODULE_NAME: cicd
+  MODULES_REPO: modules
+  GCF_SOURCE_CODE: src
+  GCF_SOURCE_ZIP: zip_source.zip
+  GCF_CHECKSUM: .checksum.txt
+  EXECUTION_VARS_FOLDER: .execution_vars
+  TFVARS_FILE: default.tfvars
+
+  # Build vars
+  ROOT: '{{.PWD}}'
+  GCF_CODE_FOLDER: '{{.MODULES_REPO}}/{{.MODULE}}/gcf_code'
+  TF_DIR_LOCATION: '{{.EXECUTION_VARS_FOLDER}}/TF_DIR.txt'
+  MODULE_DIR_LOCATION: '{{.EXECUTION_VARS_FOLDER}}/MODULE_DIR.txt'
+  ALL_MODULES_LOCATION: '{{.EXECUTION_VARS_FOLDER}}/ALL_MODULES.txt'
+  GCS_BUCKET_SOURCE_CODE: '{{.PRODUCT_NAME}}_gcs_gcf_artifacts_{{.GCP_REGION_ID}}_{{.ENV}}'
+
+includes:
+  terraform:
+    taskfile: commands/terraform.yaml
+    flatten: true
+    vars:
+      TF_STATE_BUCKET: tf_state_football_data_collection
+      GCF_CODE_FOLDER_BASENAME: 
+        sh: basename {{.GCF_CODE_FOLDER}}
+  
+  python:
+    taskfile: commands/python.yaml
+    flatten: true
+    vars:
+      GCF_TESTS_FOLDER: tests_py
+      REQUIREMENTS_FILE: requirements.txt
+      TEST_REQUIREMENTS_FILE: test_requirements.txt
+      VENV_TEST_DIR: .venv_test
+      BASE_REQUIREMENTS_FILE: '{{.ROOT}}/commands/configs/py_requirements.txt'
+      RUFF_CONFIG_FILE: '{{.ROOT}}/commands/configs/ruff.toml'
+      ENV_VARIABLES: |
+        PROJECT_ID={{.GCP_PROJECT_ID}}
+        PROJECT_ENV={{.ENV}}
+
+tasks:
+  deploy:
+    desc: Main task to execute to deploy a module. Acting like a CICD
+    cmds:
+      - task: vars-build
+      - task: py-cicd
+      - task: tf-cicd
+      - task: clean-cicd
+    requires:
+      vars:
+        - MODULE
+        - IS_PR
+        - ENV
+    preconditions:
+      - sh: test "{{.IS_PR}}" = "true" || test "{{.IS_PR}}" = "false"
+        msg: IS_PR must be true or false
+      - sh: test "{{.ENV}}" = "dev" || test "{{.ENV}}" = "prd"
+        msg: ENV must be dev or prd
+      - sh: command -v terraform
+        msg: "Terraform is not installed. Please install it before continuing."
+      - sh: command -v python3
+        msg: "Python 3 is not installed. Please install it before continuing."
+      - sh: command -v yamllint
+        msg: "yamllint is not installed. Please install it before continuing."
+      - sh: command -v pip
+        msg: "pip is not installed. Please install it before continuing."
+      - sh: command -v uv
+        msg: "uv is not installed. Please install it before continuing."
+
+  vars-build:
+    desc: Running vars-build
+    internal: true
+    cmds:
+      - mkdir -p {{.EXECUTION_VARS_FOLDER}}
+      - find {{.MODULES_REPO}} -type d -name "infra" -exec sh -c 'for dir do basename "$(dirname "$dir")"; done' sh {} + | sort | uniq | paste -sd, - > {{.ALL_MODULES_LOCATION}}
+      - |
+        if [ "{{.MODULE}}" = "{{.BASE_MODULE_NAME}}" ]; then
+          echo "{{.BASE_MODULE_NAME}}" > {{.TF_DIR_LOCATION}}
+          echo "{{.BASE_MODULE_NAME}}" > {{.MODULE_DIR_LOCATION}}
+        elif [ "{{.MODULE}}" = "{{.CICD_MODULE_NAME}}" ]; then
+          echo "{{.CICD_MODULE_NAME}}" > {{.TF_DIR_LOCATION}}
+          echo "{{.CICD_MODULE_NAME}}" > {{.MODULE_DIR_LOCATION}}
+        else
+          echo "{{.MODULES_REPO}}/{{.MODULE}}/infra" > {{.TF_DIR_LOCATION}}
+          echo "{{.MODULES_REPO}}/{{.MODULE}}" > {{.MODULE_DIR_LOCATION}}
+        fi
+
+  clean-cicd:
+    desc: Remove files at the end of the CICD process
+    internal: true
+    cmds:
+      - echo "[{{.TASK}}] --> Start to remove files"
+      # - rm -f $(cat {{.TF_DIR_LOCATION}})/{{.TFVARS_FILE}}
+      - rm -rf $(cat {{.TF_DIR_LOCATION}})/{{.TF_DATA_DIR}}
+      # - rm -rf {{.EXECUTION_VARS_FOLDER}}
+      - |
+        if [ -d "{{.GCF_CODE_FOLDER}}/{{.GCF_SOURCE_CODE}}" ]; then
+          cd {{.GCF_CODE_FOLDER}}
+          rm -f {{.GCF_SOURCE_ZIP}}
+          rm -f {{.GCF_CHECKSUM}}
+        else
+          echo "[{{.TASK}}] --> No GCF creation files to delete"
+        fi
+    requires:
+      vars:
+        - TF_DATA_DIR
+        - TFVARS_FILE
+
+  # help:
+  #   desc: Print available targets
+  #   cmds:
+  #     - echo "Available targets :"
+  #     # - echo "  py-checks           : Run test and linter for python code"
+  #     # - echo "  check-requirements  : Check if all dependencies have a fixed version"
+  #     # - echo "  clean-py-files      : Remove files created during py-checks"
+  #     # - echo "  py-testing          : All python operations in order"
+  #     # - echo "  local-cf            : Execute cloud functions locally"
+  #     # - echo "  help                : print this notice"
