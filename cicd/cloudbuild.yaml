@@ -1,6 +1,8 @@
 ---
 steps:
-  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+  - name: 'bash'
+    args: ['-c', 'echo "Ceci est une commande shell exécutée par Cloud Build"']
+  - name: 'bash'
     args: ['ENV=dev', 'MODULE=football', 'task', 'deploy']
 
 # options:
