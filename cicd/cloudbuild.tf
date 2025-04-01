@@ -10,5 +10,5 @@ resource "google_cloudbuild_trigger" "terraform_trigger" {
     }
   }
 
-  filename = "cicd/cloudbuild.yaml" # Référence au fichier cloudbuild.yaml
+  filename = "./cicd/cloudbuild.yaml" # Référence au fichier cloudbuild.yaml
 }
