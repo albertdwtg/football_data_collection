@@ -3,5 +3,5 @@ steps:
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     args: ['ENV=dev', 'MODULE=football', 'task', 'deploy']
 
-options:
-  substitution_option: 'ALLOW_LOOSE'
+# options:
+#   substitution_option: 'ALLOW_LOOSE'
