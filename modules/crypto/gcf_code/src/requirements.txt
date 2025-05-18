@@ -1,0 +1,10 @@
+curl_cffi==0.7.3
+functions-framework==3.8.1
+google-api-core==2.21.0
+google-auth==2.35.0
+google-cloud-core==2.4.1
+google-cloud-secret-manager==2.23.3
+google-cloud-storage==2.18.2
+python-dotenv==1.0.1
+python-binance==1.0.28
+polars==1.29.0
