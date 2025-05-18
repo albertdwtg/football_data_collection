@@ -41,7 +41,8 @@ class Scraper:
     )
     def make_call(
         self, method: str, url: str,
-        query_params: Optional[dict] = None, body: Optional[dict] = None
+        query_params: Optional[dict] = None, body: Optional[dict] = None,
+        headers: Optional[dict] = None
     ):
         """Function making HTTP request and handling JSON response
 
@@ -50,6 +51,7 @@ class Scraper:
             url (str): base target url
             query_params (dict, optional): additional query params. Defaults to None.
             body (dict, optional): additional request body. Defaults to None.
+            headers (dict, optional): additional request headers. Defaults to None.
 
         Raises:
             BadResponseError: If response is not what is expected
@@ -57,7 +59,10 @@ class Scraper:
         Returns:
             _type_: _description_
         """
-        headers = {"User-Agent": self.user_agent}
+        if headers is None:
+            headers = {"User-Agent": self.user_agent}
+        else:
+            headers["User-Agent"] = self.user_agent
         self.nb_calls += 1
         request_uuid = self._get_request_uuid()
         response = requests.request(
@@ -77,8 +82,7 @@ class Scraper:
         json_response = {}
         if response.status_code == SUCCESS_STATUS_CODE:
             logging.info("Succesfull request")
-            if response.headers["content-type"] == "application/json":
-                json_response = response.json()
+            json_response = response.json()
         elif response.status_code != SUCCESS_STATUS_CODE and "error" in response.json():
             raise BadResponseError(f"{response.json()['error']}")
         else:

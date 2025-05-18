@@ -48,6 +48,7 @@ includes:
       REQUIREMENTS_FILE: requirements.txt
       TEST_REQUIREMENTS_FILE: test_requirements.txt
       VENV_TEST_DIR: .venv_test
+      VENV_DIR: .venv
       BASE_REQUIREMENTS_FILE: '{{.ROOT}}/commands/configs/py_requirements.txt'
       RUFF_CONFIG_FILE: '{{.ROOT}}/commands/configs/ruff.toml'
       ENV_VARIABLES: |
@@ -106,9 +107,9 @@ tasks:
     internal: true
     cmds:
       - echo "[{{.TASK}}] --> Start to remove files"
-      # - rm -f $(cat {{.TF_DIR_LOCATION}})/{{.TFVARS_FILE}}
+      - rm -f $(cat {{.TF_DIR_LOCATION}})/{{.TFVARS_FILE}}
       - rm -rf $(cat {{.TF_DIR_LOCATION}})/{{.TF_DATA_DIR}}
-      # - rm -rf {{.EXECUTION_VARS_FOLDER}}
+      - rm -rf {{.EXECUTION_VARS_FOLDER}}
       - |
         if [ -d "{{.GCF_CODE_FOLDER}}/{{.GCF_SOURCE_CODE}}" ]; then
           cd {{.GCF_CODE_FOLDER}}
@@ -121,6 +122,19 @@ tasks:
       vars:
         - TF_DATA_DIR
         - TFVARS_FILE
+  
+  build-and-push-docker:
+    desc: Build and push Docker image to Artifact Registry
+    vars:
+      LOCATION: europe-west1
+      REPOSITORY: objectchecker
+      IMAGE: temp_cloudbuild
+      TAG: latest
+    cmds:
+      - sudo usermod -a -G docker $USER
+      - gcloud auth configure-docker {{.LOCATION}}-docker.pkg.dev
+      - docker build --build-arg PYTHON_VERSION=3.12.3 --build-arg TERRAFORM_VERSION=1.10.5 -t {{.LOCATION}}-docker.pkg.dev/{{.GCP_PROJECT_ID}}/{{.REPOSITORY}}/{{.IMAGE}}:{{.TAG}} .
+      - docker push {{.LOCATION}}-docker.pkg.dev/{{.GCP_PROJECT_ID}}/{{.REPOSITORY}}/{{.IMAGE}}:{{.TAG}}
 
   # help:
   #   desc: Print available targets

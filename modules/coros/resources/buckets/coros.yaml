@@ -1,5 +1,4 @@
 ---
-force_destroy: false
 lifecycle_rule:
   - action:
       type: Delete

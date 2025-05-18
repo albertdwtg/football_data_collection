@@ -1,5 +1,6 @@
 resource "google_cloudfunctions2_function" "function" {
-  name        = "${var.product_name}_gcf_${var.module}_${var.region_id}_${var.env}"
+  name        = "${var.product_name}-gcf-${var.module}-${var.region_id}-${var.env}"
+  project     = var.project
   location    = var.region
   description = "Cloud Function created in module ${var.module}"
 
@@ -27,4 +28,22 @@ resource "google_cloudfunctions2_function" "function" {
       PROJECT_ENV = var.env
     }
   }
+}
+
+# data "google_service_account" "execution_sa" {
+#   account_id = join("-", [
+#     var.product_name,
+#     "execution",
+#     "sa",
+#     var.module,
+#     var.env
+#   ])
+# }
+
+resource "google_cloud_run_service_iam_member" "invoker_permission" {
+  location = google_cloudfunctions2_function.function.location
+  project  = google_cloudfunctions2_function.function.project
+  service  = google_cloudfunctions2_function.function.name
+  role     = "roles/run.invoker"
+  member   = "serviceAccount:${module.iac_framework.execution_sa}"
 }

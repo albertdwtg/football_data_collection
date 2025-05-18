@@ -94,17 +94,19 @@ tasks:
           exit 0
         fi
 
-  # local-cf:
-  #   desc: Execute cloud functions locally
-  #   cmds:
-  #     - echo '[{{.TASK}}] --> Start to build python local cloud function'
-  #     - |
-  #       set -eo pipefail
-  #       cd {{.GCF_CODE_FOLDER}}/{{.GCF_SOURCE_CODE}}
-  #       echo 'Create venv'
-  #       python3 -m venv {{.VENV_DIR}}
-  #       source {{.VENV_DIR}}/bin/activate
-  #       echo 'Install requirements'
-  #       pip install -r {{.REQUIREMENTS_FILE}}
-  #       echo "{{.ENV_VARIABLES}}" > .env
-  #       functions-framework --target=run --debug
+  local-cf:
+    desc: Execute cloud functions locally
+    cmds:
+      - echo '[{{.TASK}}] --> Start to build python local cloud function'
+      - |
+        set -eo pipefail
+        cd {{.GCF_CODE_FOLDER}}/{{.GCF_SOURCE_CODE}}
+        echo '[{{.TASK}}] --> Create venv'
+        python3 -m venv {{.ROOT}}/{{.GCF_CODE_FOLDER}}/{{.VENV_DIR}}
+        echo "[{{.TASK}}] --> Install test requirements"
+        uv pip install -r {{.REQUIREMENTS_FILE}} -p {{.ROOT}}/{{.GCF_CODE_FOLDER}}/{{.VENV_DIR}} --quiet
+        # source {{.ROOT}}/{{.GCF_CODE_FOLDER}}/{{.VENV_DIR}}/bin/activate
+        # echo 'Install requirements'
+        # pip install -r {{.REQUIREMENTS_FILE}}
+        echo "{{.ENV_VARIABLES}}" > .env
+        {{.ROOT}}/{{.GCF_CODE_FOLDER}}/{{.VENV_DIR}}/bin/functions-framework --target=run --debug

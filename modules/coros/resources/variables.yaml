@@ -1,0 +1,3 @@
+---
+module-gcf-url: |-
+  https://${region}-${project}.cloudfunctions.net/${product_name}-gcf-${module}-${region_id}-${env}

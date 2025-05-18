@@ -1,0 +1,24 @@
+---
+http_call:
+  params:
+    - url
+    - method
+    - auth
+    - headers: null
+    - body: null
+    - query: null
+    - timeout: 10
+  steps:
+    - make_request:
+        call: http.request
+        args:
+          method: $${method}
+          url: $${url}
+          timeout: $${timeout}  # seconds
+          headers: $${headers}
+          body: $${body}
+          query: $${query}
+          auth: $${auth}
+        result: http_response
+    - returnStep:
+        return: $${http_response}

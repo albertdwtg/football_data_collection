@@ -23,3 +23,10 @@ class InternalServerError(Exception):
     def __init__(self, message: str):
         self.message = message
         super().__init__(self.message)
+
+class SecretNotFoundError(Exception):
+    """Custom exception raised when a secret is not found."""
+    def __init__(self, secret_name):
+        self.secret_name = secret_name
+        self.message = f"Secret '{secret_name}' not found."
+        super().__init__(self.message)

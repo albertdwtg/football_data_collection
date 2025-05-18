@@ -6,26 +6,29 @@ locals {
     trim(file, "../") => "../../../modules/${var.module}/${local.resources_folder}/workflows/${trim(file, "../")}"
   }
 
+  sub_wkfs = join("\n",[
+    for file_path in fileset("../../../iac_framework/wkf_library/**", "*.yaml") : 
+    templatefile("../../../iac_framework/wkf_library/${trim(file_path, "../")}",
+      merge(
+        try(yamldecode(file("../../../modules/${var.module}/${local.resources_folder}/variables.yaml")), {}),
+        {
+          project : var.project
+          region : var.region
+          module : var.module
+          env : var.env
+        }
+      )
+    )
+  ])
+
   workflows_configs = {
     for file_name, file_path in local.workflows_config_files_paths :
     trimsuffix(file_name, ".yaml") => {
       base_name = trimsuffix(basename(file_name), ".yaml")
-      content = yamldecode(templatefile(
+      content = templatefile(
         file_path,
         merge(
-          yamldecode(file("../../../modules/${var.module}/${local.resources_folder}/variables.yaml")),
-          {
-            project : var.project
-            region : var.region
-            module : var.module
-            env : var.env
-          }
-        )
-      ))
-      source_contents = templatefile(
-        file_path,
-        merge(
-          yamldecode(file("../../../modules/${var.module}/${local.resources_folder}/variables.yaml")),
+          local.user_variables,
           {
             project : var.project
             region : var.region
@@ -46,7 +49,7 @@ resource "google_workflows_workflow" "workflows" {
   name            = "${var.product_name}_wkf_${each.value.base_name}_${var.region_id}_${var.env}"
   description     = "Workflow created in module ${var.module}"
   call_log_level  = "LOG_ALL_CALLS"
-  source_contents = yamlencode(each.value.content.source_contents)
+  source_contents = replace(join("\n ##SUB-WORKFLOWS\n", [each.value.content, local.sub_wkfs]), "---", "")
   labels          = local.common_labels
   depends_on      = [google_service_account.execution_sa]
 }

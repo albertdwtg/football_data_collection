@@ -30,29 +30,7 @@ def args_validator(request_body: dict):
     Raises:
         BadRequestError: if a condition is not met
     """
-    mandatory_keys = ["target"]
+    mandatory_keys = ["account"]
     for key in mandatory_keys:
         if key not in request_body:
             raise BadRequestError(f"'{key}' is a mandatory input key")
-
-    possible_targets = ["last_round_season_stats", "round_season_stats"]
-    if request_body["target"] not in possible_targets:
-        raise BadRequestError(f"'target' must be in {possible_targets}")
-
-    int_args = ["tournament_id", "season_id", "round"]
-    for arg in int_args:
-        # ruff: noqa: SIM102
-        if arg in request_body and isinstance(request_body[arg], str):
-            if request_body[arg].isdigit() is False:
-                raise BadRequestError(f"'{arg}' must contain only digits")
-
-    mandatory_keys_by_target = {
-        "last_round_season_stats": ["tournament_id", "season_id"],
-        "round_season_stats": ["tournament_id", "season_id", "round"],
-    }
-
-    for key in mandatory_keys_by_target[request_body["target"]]:
-        if key not in request_body:
-            raise BadRequestError(
-                f"'{key}' is a mandatory input key for target {request_body['target']}"
-            )

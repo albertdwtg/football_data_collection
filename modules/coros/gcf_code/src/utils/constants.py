@@ -8,7 +8,7 @@ load_dotenv()
 
 PROJECT_ID = os.environ["PROJECT_ID"]
 PROJECT_ENV = os.environ["PROJECT_ENV"]
-GCS_BUCKET = f"football_data_collection_{PROJECT_ENV.lower()}"
+GCS_BUCKET = f"cdp_gcs_coros_ew1_{PROJECT_ENV.lower()}"
 
 POSSIBLE_BROWSERS = [
     "chrome99",
@@ -40,9 +40,4 @@ POSSIBLE_USER_AGENTS = [
 
 TIMEOUT = 10
 
-REFERENCE_TEAMS = {
-    "8": "2817",  # LaLiga: Barcelona
-    "17": "42",  # PremierLeague: Arsenal
-}
-
-API_BASE_URL = "https://www.sofascore.com/api/v1"
+COROS_PWD_SECRET_ID = f"cdp_srt_coros_{PROJECT_ENV.lower()}"

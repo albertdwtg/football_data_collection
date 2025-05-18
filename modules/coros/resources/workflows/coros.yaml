@@ -1,0 +1,12 @@
+---
+main:
+  params:
+    - temp
+  steps:
+    - extract:
+        call: http_call
+        args:
+          method: POST
+          url: ${module-gcf-url}
+          auth:
+            type: OIDC

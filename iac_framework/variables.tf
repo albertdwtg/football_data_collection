@@ -31,3 +31,19 @@ variable "env" {
     error_message = "Provide a correct env value, can be 'dev' or 'prd'"
   }
 }
+
+locals {
+  user_variables = try(yamldecode(
+    templatefile(
+      "../../../modules/${var.module}/${local.resources_folder}/variables.yaml",
+      {
+        project : var.project
+        region : var.region
+        region_id : var.region_id
+        module : var.module
+        product_name : var.product_name
+        env : var.env
+      }
+    )
+  ), {})
+}

@@ -14,9 +14,25 @@ from utils.constants import GCS_BUCKET, PROJECT_ID
 class DataWritter:
     """Object that writes data to different locations based on parameters"""
 
-    def __init__(self, mode: str):
-        self.mode = mode
+    def __init__(self):
         self.gcs_client = storage.Client(PROJECT_ID)
+    
+    def write_contents(self, directory: str, content: list[dict], file_type: str):
+        """Function that loads list of contents and write them to GCP bucket
+
+        Args:
+            directory (str): Path inside the bucket where files will be written
+            content (list[dict]): list of dict containing data to write (data, request_uuid, metadata)
+            file_type (str): extension of the file to write (ex: json)
+        """
+        if file_type.lower() == "json":
+            for content in content:
+                self.write_json(
+                    json_content=content["data"],
+                    directory=directory,
+                    request_uuid=content["request_uuid"],
+                    metadata=content.get("metadata")
+                )
 
     @retry(
         stop = stop_after_attempt(3),
@@ -42,17 +58,11 @@ class DataWritter:
         output_file_name = f"{directory}/{request_uuid}.json"
         if metadata:
             json_content["metadata"] = metadata
-        if self.mode.upper() == "LOCAL":
-            if not os.path.exists(directory):
-                os.makedirs(directory)
-            with open(output_file_name, "w", encoding="UTF-8") as output_file:
-                json.dump(json_content, output_file)
-        if self.mode.upper() == "CLOUD":
-            self.upload_blob(
-                bucket_name=GCS_BUCKET,
-                destination_blob_name=output_file_name,
-                content=str(json_content),
-            )
+        self.upload_blob(
+            bucket_name=GCS_BUCKET,
+            destination_blob_name=output_file_name,
+            content=str(json_content),
+        )
         logging.info("Content of request %s has been loaded", request_uuid)
 
     def upload_blob(self, bucket_name: str, destination_blob_name: str, content: str):
