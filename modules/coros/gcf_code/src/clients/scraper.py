@@ -2,7 +2,6 @@
 
 import logging
 import secrets
-import string
 from typing import Optional
 
 from curl_cffi import requests
@@ -22,17 +21,6 @@ class Scraper:
         self.user_agent = secrets.choice(POSSIBLE_USER_AGENTS)
         self.browser = secrets.choice(POSSIBLE_BROWSERS)
         self.nb_calls = 0
-
-    def _get_request_uuid(self) -> str:
-        """Function to generate a request uuid
-
-        Returns:
-            str: Generated uuid
-        """
-        uuid = "".join(
-            [secrets.choice(string.ascii_letters + string.digits) for i in range(8)]
-        )
-        return uuid.lower()
 
     @retry(
         stop = stop_after_attempt(3),
@@ -64,7 +52,6 @@ class Scraper:
         else:
             headers["User-Agent"] = self.user_agent
         self.nb_calls += 1
-        request_uuid = self._get_request_uuid()
         response = requests.request(
             method=method,
             url=url,
@@ -87,7 +74,7 @@ class Scraper:
             raise BadResponseError(f"{response.json()['error']}")
         else:
             raise BadResponseError(f"Bad response : {response.text}")
-        return request_uuid, json_response
+        return json_response
 
     def _update_attributes(self):
         """Function to update attributes of the scraper

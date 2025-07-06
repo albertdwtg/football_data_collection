@@ -1,6 +1,7 @@
 """Main module that will be called by the cloud function"""
 
 import functions_framework
+import os
 
 from clients.coros import Coros
 from clients.data_writter import DataWritter
@@ -12,9 +13,7 @@ from utils.exceptions import (
 from utils.logging_conf import init_logging
 from utils.validator import args_validator, input_request_checker
 from utils.secrets import get_secret
-from utils.constants import PROJECT_ID, COROS_PWD_SECRET_ID
-
-init_logging()
+from utils.constants import PROJECT_ID, COROS_PWD_SECRET_ID, get_request_uuid
 
 
 # Register an HTTP function with the Functions Framework
@@ -23,11 +22,13 @@ def run(request):
     """Entrypoint of the cloud function
     It will handle the incoming request
     Args:
-        request (_type_): Incoming request
+        request (requests.request): Incoming request
 
     Returns:
         Tuple: Tuple containing the response and the status code
     """
+    os.environ["REQUEST_UUID"] = get_request_uuid()
+    init_logging()
     try:
         input_request_checker(request=request)
         args_validator(request.json)
@@ -43,9 +44,11 @@ def run(request):
         )
         data_writter = DataWritter()
         coros_client.get_access_token()
-        contents = coros_client.get_all_activities()
+        contents = coros_client.get_all_activities(
+            size = 200
+        )
         data_writter.write_contents(
-            directory=f"activities",
+            directory="activities_details",
             content=contents,
             file_type="json"
         )

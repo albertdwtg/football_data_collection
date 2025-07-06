@@ -1,6 +1,8 @@
 """Module collecting constants and ENV variables"""
 
 import os
+import secrets
+import string
 
 from dotenv import load_dotenv
 
@@ -41,3 +43,14 @@ POSSIBLE_USER_AGENTS = [
 TIMEOUT = 10
 
 COROS_PWD_SECRET_ID = f"cdp_srt_coros_{PROJECT_ENV.lower()}"
+
+def get_request_uuid() -> str:
+    """Function to generate a request uuid
+
+    Returns:
+        str: Generated uuid
+    """
+    uuid = "".join(
+        [secrets.choice(string.ascii_letters + string.digits) for i in range(8)]
+    )
+    return uuid.lower()

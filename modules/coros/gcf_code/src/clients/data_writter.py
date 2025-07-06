@@ -1,8 +1,6 @@
 """Module to write clean data into distincts environments"""
 
-import json
 import logging
-import os
 from typing import Optional
 
 from google.cloud import storage
@@ -22,16 +20,16 @@ class DataWritter:
 
         Args:
             directory (str): Path inside the bucket where files will be written
-            content (list[dict]): list of dict containing data to write (data, request_uuid, metadata)
+            content (list[dict]): list of dict containing data to write
             file_type (str): extension of the file to write (ex: json)
         """
         if file_type.lower() == "json":
-            for content in content:
+            for export in content:
                 self.write_json(
-                    json_content=content["data"],
+                    json_content=export["data"],
                     directory=directory,
-                    request_uuid=content["request_uuid"],
-                    metadata=content.get("metadata")
+                    file_name=export["file_name"],
+                    metadata=export.get("metadata")
                 )
 
     @retry(
@@ -43,7 +41,7 @@ class DataWritter:
         self,
         json_content: dict,
         directory: str,
-        request_uuid: str,
+        file_name: str,
         metadata: Optional[dict] = None,
     ):
         """Function to write a dict into a JSON file
@@ -51,11 +49,11 @@ class DataWritter:
         Args:
             json_content (dict): variable/content to write
             directory (str): directory in which data will be written
-            request_uuid (str): request_uuid of the operation
+            file_name (str): file_name to write in the bucket
             metadata (dict, optional): Additional infos to add in the
                                         file content. Defaults to None.
         """
-        output_file_name = f"{directory}/{request_uuid}.json"
+        output_file_name = f"{directory}/{file_name}.json"
         if metadata:
             json_content["metadata"] = metadata
         self.upload_blob(
@@ -63,7 +61,7 @@ class DataWritter:
             destination_blob_name=output_file_name,
             content=str(json_content),
         )
-        logging.info("Content of request %s has been loaded", request_uuid)
+        logging.info("Content has been loaded to %s", output_file_name)
 
     def upload_blob(self, bucket_name: str, destination_blob_name: str, content: str):
         """Uploads a file to the bucket.
