@@ -1,0 +1,6 @@
+dataset_id: ${datasets["coros"].id}
+name: activities_details
+version: 1
+description: Temp description
+definition_body: |-
+  SELECT TRUE;

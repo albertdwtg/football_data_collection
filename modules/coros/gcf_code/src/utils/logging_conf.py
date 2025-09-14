@@ -6,7 +6,7 @@ import os
 from utils.constants import PROJECT_ENV
 
 
-def init_logging():
+def init_logging() -> None:
     """Initialization of loggers"""
     logs_format = f"request_uuid:{os.environ.get("REQUEST_UUID")} "
     logs_format += "%(asctime)s - %(name)s - %(levelname)s - %(message)s"

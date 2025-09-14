@@ -1,6 +1,7 @@
 """Module to write clean data into distincts environments"""
 
 import logging
+import json
 from typing import Optional
 
 from google.cloud import storage
@@ -12,10 +13,13 @@ from utils.constants import GCS_BUCKET, PROJECT_ID
 class DataWritter:
     """Object that writes data to different locations based on parameters"""
 
-    def __init__(self):
+    def __init__(self) -> None:
+        """Initialization of the DataWritter object
+        """
         self.gcs_client = storage.Client(PROJECT_ID)
     
-    def write_contents(self, directory: str, content: list[dict], file_type: str):
+    def write_contents(self, directory: str, content: list[dict], file_type: str
+    ) -> None:
         """Function that loads list of contents and write them to GCP bucket
 
         Args:
@@ -43,7 +47,7 @@ class DataWritter:
         directory: str,
         file_name: str,
         metadata: Optional[dict] = None,
-    ):
+    ) -> None:
         """Function to write a dict into a JSON file
 
         Args:
@@ -59,11 +63,16 @@ class DataWritter:
         self.upload_blob(
             bucket_name=GCS_BUCKET,
             destination_blob_name=output_file_name,
-            content=str(json_content),
+            content=json.dumps(json_content),
         )
         logging.info("Content has been loaded to %s", output_file_name)
 
-    def upload_blob(self, bucket_name: str, destination_blob_name: str, content: str):
+    def upload_blob(
+        self, 
+        bucket_name: str, 
+        destination_blob_name: str, 
+        content: str
+    ) -> None:
         """Uploads a file to the bucket.
 
         Args:

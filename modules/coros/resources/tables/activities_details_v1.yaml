@@ -1,0 +1,554 @@
+---
+table_id: activities_details
+version: 1
+dataset_id: ${datasets["coros"].id}
+description: Table storing raw data about Coros activities details. Collected vie 'summary' field
+deletion_protection: false
+time_partitioning:
+  type: DAY
+require_partition_filter: true
+schema:
+  - name: adjustedPace
+    mode: NULLABLE
+    type: INTEGER
+    description: Allure ajustée (en secondes par km ou mile, selon l'unité).
+  - name: aerobicEffect
+    mode: NULLABLE
+    type: FLOAT
+    description: Effet aérobique de l'activité.
+  - name: aerobicEffectState
+    mode: NULLABLE
+    type: INTEGER
+    description: État de l'effet aérobique (valeur numérique).
+  - name: alpha500
+    mode: NULLABLE
+    type: INTEGER
+    description: Valeur alpha sur 500 (non spécifiée).
+  - name: anaerobicEffect
+    mode: NULLABLE
+    type: FLOAT
+    description: Effet anaérobique de l'activité.
+  - name: anaerobicEffectState
+    mode: NULLABLE
+    type: INTEGER
+    description: État de l'effet anaérobique (valeur numérique).
+  - name: avg5x10s
+    mode: NULLABLE
+    type: INTEGER
+    description: Moyenne sur 5 intervalles de 10 secondes (non spécifiée).
+  - name: avgAirPower
+    mode: NULLABLE
+    type: INTEGER
+    description: Puissance moyenne dans l'air (en watts).
+  - name: avgCadence
+    mode: NULLABLE
+    type: INTEGER
+    description: Cadence moyenne (en pas par minute).
+  - name: avgElev
+    mode: NULLABLE
+    type: INTEGER
+    description: Élévation moyenne (en mètres).
+  - name: avgFromPower
+    mode: NULLABLE
+    type: INTEGER
+    description: Moyenne calculée à partir de la puissance (non spécifiée).
+  - name: avgGrade
+    mode: NULLABLE
+    type: FLOAT
+    description: Pente moyenne (en pourcentage).
+  - name: avgGroundBalanceLeft
+    mode: NULLABLE
+    type: INTEGER
+    description: Équilibre moyen au sol à gauche (non spécifié).
+  - name: avgGroundTime
+    mode: NULLABLE
+    type: INTEGER
+    description: Temps moyen au sol (en millisecondes).
+  - name: avgHr
+    mode: NULLABLE
+    type: INTEGER
+    description: Fréquence cardiaque moyenne (en bpm).
+  - name: avgLegStiffness
+    mode: NULLABLE
+    type: INTEGER
+    description: Raideur moyenne des jambes (non spécifiée).
+  - name: avgMoveSpeed
+    mode: NULLABLE
+    type: INTEGER
+    description: Vitesse moyenne de déplacement (en cm/s).
+  - name: avgPace
+    mode: NULLABLE
+    type: INTEGER
+    description: Allure moyenne (en secondes par km ou mile).
+  - name: avgPower
+    mode: NULLABLE
+    type: INTEGER
+    description: Puissance moyenne (en watts).
+  - name: avgPowerHori
+    mode: NULLABLE
+    type: INTEGER
+    description: Puissance moyenne horizontale (en watts).
+  - name: avgPowerOrien
+    mode: NULLABLE
+    type: INTEGER
+    description: Puissance moyenne d'orientation (en watts).
+  - name: avgPowerVert
+    mode: NULLABLE
+    type: INTEGER
+    description: Puissance moyenne verticale (en watts).
+  - name: avgRunningEf
+    mode: NULLABLE
+    type: INTEGER
+    description: Efficacité moyenne de course (non spécifiée).
+  - name: avgSpeed
+    mode: NULLABLE
+    type: FLOAT
+    description: Vitesse moyenne (en cm/s).
+  - name: avgStepLen
+    mode: NULLABLE
+    type: INTEGER
+    description: Longueur moyenne des pas (en cm).
+  - name: avgSwolfLen
+    mode: NULLABLE
+    type: INTEGER
+    description: Longueur moyenne SWOLF (en natation).
+  - name: avgVertRatio
+    mode: NULLABLE
+    type: INTEGER
+    description: Ratio vertical moyen (non spécifié).
+  - name: avgVertVibration
+    mode: NULLABLE
+    type: INTEGER
+    description: Vibration verticale moyenne (non spécifiée).
+  - name: bestKm
+    mode: NULLABLE
+    type: INTEGER
+    description: Meilleure performance sur 1 km (en secondes).
+  - name: bestLength
+    mode: NULLABLE
+    type: INTEGER
+    description: Meilleure longueur (non spécifiée).
+  - name: bicycleIf
+    mode: NULLABLE
+    type: INTEGER
+    description: Facteur d'intensité à vélo (non spécifié).
+  - name: bodyTemperature
+    mode: NULLABLE
+    type: INTEGER
+    description: Température corporelle (en centièmes de °C).
+  - name: calories
+    mode: NULLABLE
+    type: INTEGER
+    description: Calories brûlées (en cal).
+  - name: climbingTime
+    mode: NULLABLE
+    type: INTEGER
+    description: Temps de montée (en secondes).
+  - name: combineSportMode
+    mode: NULLABLE
+    type: INTEGER
+    description: Mode sportif combiné (valeur numérique).
+  - name: compareDistance
+    mode: NULLABLE
+    type: INTEGER
+    description: Distance de comparaison (en cm).
+  - name: currentVo2Max
+    mode: NULLABLE
+    type: INTEGER
+    description: VO2 max actuel (en ml/kg/min).
+  - name: deviceSportMode
+    mode: NULLABLE
+    type: INTEGER
+    description: Mode sportif de l'appareil (valeur numérique).
+  - name: displayPerformance
+    mode: NULLABLE
+    type: INTEGER
+    description: Affichage de la performance (valeur numérique).
+  - name: distance
+    mode: NULLABLE
+    type: INTEGER
+    description: Distance totale (en cm).
+  - name: downhillDesc
+    mode: NULLABLE
+    type: INTEGER
+    description: Descente (en mètres).
+  - name: downhillDist
+    mode: NULLABLE
+    type: INTEGER
+    description: Distance en descente (en cm).
+  - name: downhillTime
+    mode: NULLABLE
+    type: INTEGER
+    description: Temps en descente (en secondes).
+  - name: elevGain
+    mode: NULLABLE
+    type: INTEGER
+    description: Gain d'altitude (en mètres).
+  - name: endTimestamp
+    mode: NULLABLE
+    type: TIMESTAMP
+    description: Horodatage de fin de l'activité (en millisecondes depuis epoch).
+  - name: estimation
+    mode: NULLABLE
+    type: INTEGER
+    description: Estimation (valeur numérique).
+  - name: exercises
+    mode: NULLABLE
+    type: INTEGER
+    description: Nombre d'exercices.
+  - name: falls
+    mode: NULLABLE
+    type: INTEGER
+    description: Nombre de chutes.
+  - name: fastest100m
+    mode: NULLABLE
+    type: INTEGER
+    description: Temps le plus rapide sur 100m (en secondes).
+  - name: fastest1852m
+    mode: NULLABLE
+    type: INTEGER
+    description: Temps le plus rapide sur 1852m (en secondes).
+  - name: fastest250m
+    mode: NULLABLE
+    type: INTEGER
+    description: Temps le plus rapide sur 250m (en secondes).
+  - name: fastest500m
+    mode: NULLABLE
+    type: INTEGER
+    description: Temps le plus rapide sur 500m (en secondes).
+  - name: floors
+    mode: NULLABLE
+    type: INTEGER
+    description: Nombre d'étages montés.
+  - name: fpRatio
+    mode: NULLABLE
+    type: INTEGER
+    description: Ratio FP (non spécifié).
+  - name: gradingSystem
+    mode: NULLABLE
+    type: INTEGER
+    description: Système de notation (valeur numérique).
+  - name: hardestGrade
+    mode: NULLABLE
+    type: INTEGER
+    description: Grade le plus difficile (valeur numérique).
+  - name: hasProgram
+    mode: NULLABLE
+    type: INTEGER
+    description: Indique si un programme est associé (0 ou 1).
+  - name: hrmVo2Max
+    mode: NULLABLE
+    type: INTEGER
+    description: VO2 max mesuré par cardiofréquencemètre (en ml/kg/min).
+  - name: indoorRealDistance
+    mode: NULLABLE
+    type: INTEGER
+    description: Distance réelle en intérieur (en cm).
+  - name: isRunTest
+    mode: NULLABLE
+    type: INTEGER
+    description: Indique si c'est un test de course (0 ou 1).
+  - name: isShowMs
+    mode: NULLABLE
+    type: BOOLEAN
+    description: Indique si les millisecondes sont affichées.
+  - name: lapAvgPressure
+    mode: NULLABLE
+    type: INTEGER
+    description: Pression moyenne par tour (non spécifiée).
+  - name: lapDistance
+    mode: NULLABLE
+    type: INTEGER
+    description: Distance par tour (en cm).
+  - name: leftPedalSmoothness
+    mode: NULLABLE
+    type: INTEGER
+    description: Fluidité de la pédale gauche (valeur numérique).
+  - name: leftTorqueEffectiveness
+    mode: NULLABLE
+    type: INTEGER
+    description: Efficacité du couple à gauche (valeur numérique).
+  - name: lengths
+    mode: NULLABLE
+    type: INTEGER
+    description: Nombre de longueurs (en natation).
+  - name: max2s
+    mode: NULLABLE
+    type: INTEGER
+    description: Valeur maximale sur 2 secondes (non spécifiée).
+  - name: maxActivityFall
+    mode: NULLABLE
+    type: INTEGER
+    description: Chute d'activité maximale (non spécifiée).
+  - name: maxCadence
+    mode: NULLABLE
+    type: INTEGER
+    description: Cadence maximale (en pas par minute).
+  - name: maxElev
+    mode: NULLABLE
+    type: INTEGER
+    description: Élévation maximale (en mètres).
+  - name: maxGrade
+    mode: NULLABLE
+    type: FLOAT
+    description: Pente maximale (en pourcentage).
+  - name: maxHr
+    mode: NULLABLE
+    type: INTEGER
+    description: Fréquence cardiaque maximale (en bpm).
+  - name: maxJump
+    mode: NULLABLE
+    type: INTEGER
+    description: Hauteur de saut maximale (en cm).
+  - name: maxPower
+    mode: NULLABLE
+    type: INTEGER
+    description: Puissance maximale (en watts).
+  - name: maxSpeed
+    mode: NULLABLE
+    type: INTEGER
+    description: Vitesse maximale (en cm/s).
+  - name: maxSwolfLen
+    mode: NULLABLE
+    type: INTEGER
+    description: SWOLF maximal (en natation).
+  - name: maxTideHeight
+    mode: NULLABLE
+    type: INTEGER
+    description: Hauteur maximale de la marée (en cm).
+  - name: maxTideTimestamp
+    mode: NULLABLE
+    type: TIMESTAMP
+    description: Horodatage de la marée maximale (en millisecondes depuis epoch).
+  - name: minElev
+    mode: NULLABLE
+    type: INTEGER
+    description: Élévation minimale (en mètres).
+  - name: moonPercent
+    mode: NULLABLE
+    type: INTEGER
+    description: Pourcentage de lune visible.
+  - name: moonPhase
+    mode: NULLABLE
+    type: INTEGER
+    description: Phase de la lune (valeur numérique).
+  - name: mutliPitchStage
+    mode: NULLABLE
+    type: INTEGER
+    description: Stade multi-pitch (valeur numérique).
+  - name: name
+    mode: NULLABLE
+    type: STRING
+    description: Nom de l'activité.
+  - name: noPerformanceReason
+    mode: NULLABLE
+    type: INTEGER
+    description: Raison de l'absence de performance (valeur numérique).
+  - name: noPerformanceReasonTip
+    mode: NULLABLE
+    type: STRING
+    description: Conseils sur l'absence de performance.
+  - name: np
+    mode: NULLABLE
+    type: INTEGER
+    description: Valeur NP (non spécifiée).
+  - name: pauseTime
+    mode: NULLABLE
+    type: INTEGER
+    description: Temps de pause (en secondes).
+  - name: pdrMode
+    mode: NULLABLE
+    type: BOOLEAN
+    description: Mode PDR activé ou non.
+  - name: performance
+    mode: NULLABLE
+    type: INTEGER
+    description: Niveau de performance (valeur numérique).
+  - name: pitch
+    mode: NULLABLE
+    type: INTEGER
+    description: Inclinaison (valeur numérique).
+  - name: planId
+    mode: NULLABLE
+    type: STRING
+    description: Identifiant du plan.
+  - name: pressureUnit
+    mode: NULLABLE
+    type: INTEGER
+    description: Unité de pression (valeur numérique).
+  - name: programId
+    mode: NULLABLE
+    type: STRING
+    description: Identifiant du programme.
+  - name: rdType
+    mode: NULLABLE
+    type: INTEGER
+    description: Type de RD (valeur numérique).
+  - name: rightPedalSmoothness
+    mode: NULLABLE
+    type: INTEGER
+    description: Fluidité de la pédale droite (valeur numérique).
+  - name: rightTorqueEffectiveness
+    mode: NULLABLE
+    type: INTEGER
+    description: Efficacité du couple à droite (valeur numérique).
+  - name: ropeAvgSpeed
+    mode: NULLABLE
+    type: INTEGER
+    description: Vitesse moyenne à la corde (en cm/s).
+  - name: ropeMaxSpeed
+    mode: NULLABLE
+    type: INTEGER
+    description: Vitesse maximale à la corde (en cm/s).
+  - name: seatedTime
+    mode: NULLABLE
+    type: INTEGER
+    description: Temps assis (en secondes).
+  - name: sets
+    mode: NULLABLE
+    type: INTEGER
+    description: Nombre de séries.
+  - name: speedType
+    mode: NULLABLE
+    type: INTEGER
+    description: Type de vitesse (valeur numérique).
+  - name: speedUnit
+    mode: NULLABLE
+    type: INTEGER
+    description: Unité de vitesse (valeur numérique).
+  - name: sportMode
+    mode: NULLABLE
+    type: INTEGER
+    description: Mode sportif (valeur numérique).
+  - name: sportType
+    mode: NULLABLE
+    type: INTEGER
+    description: Type de sport (valeur numérique).
+  - name: staminaLevel7d
+    mode: NULLABLE
+    type: FLOAT
+    description: Niveau d'endurance sur 7 jours.
+  - name: standardRate
+    mode: NULLABLE
+    type: FLOAT
+    description: Taux standard (valeur numérique).
+  - name: standingTime
+    mode: NULLABLE
+    type: INTEGER
+    description: Temps debout (en secondes).
+  - name: startTimestamp
+    mode: NULLABLE
+    type: TIMESTAMP
+    description: Horodatage de début de l'activité (en millisecondes depuis epoch).
+  - name: strydPowerCp
+    mode: NULLABLE
+    type: INTEGER
+    description: Puissance CP Stryd (en watts).
+  - name: sunriseTime
+    mode: NULLABLE
+    type: INTEGER
+    description: Heure du lever du soleil (en secondes depuis minuit).
+  - name: sunsetTime
+    mode: NULLABLE
+    type: INTEGER
+    description: Heure du coucher du soleil (en secondes depuis minuit).
+  - name: timezone
+    mode: NULLABLE
+    type: INTEGER
+    description: Fuseau horaire (en heures par rapport à UTC).
+  - name: tiredRate
+    mode: NULLABLE
+    type: FLOAT
+    description: Taux de fatigue.
+  - name: tiredRateState
+    mode: NULLABLE
+    type: INTEGER
+    description: État du taux de fatigue (valeur numérique).
+  - name: top1CatchWeight
+    mode: NULLABLE
+    type: INTEGER
+    description: Poids de la meilleure prise (en grammes).
+  - name: top5CatchesWeight
+    mode: NULLABLE
+    type: INTEGER
+    description: Poids des 5 meilleures prises (en grammes).
+  - name: totalCadence
+    mode: NULLABLE
+    type: INTEGER
+    description: Cadence totale (en pas).
+  - name: totalCasts
+    mode: NULLABLE
+    type: INTEGER
+    description: Nombre total de lancers.
+  - name: totalCatchesWeight
+    mode: NULLABLE
+    type: INTEGER
+    description: Poids total des prises (en grammes).
+  - name: totalCatchs
+    mode: NULLABLE
+    type: INTEGER
+    description: Nombre total de prises.
+  - name: totalDescent
+    mode: NULLABLE
+    type: INTEGER
+    description: Descente totale (en mètres).
+  - name: totalFishingTime
+    mode: NULLABLE
+    type: INTEGER
+    description: Temps total de pêche (en secondes).
+  - name: totalReps
+    mode: NULLABLE
+    type: INTEGER
+    description: Nombre total de répétitions.
+  - name: totalStumbleRope
+    mode: NULLABLE
+    type: INTEGER
+    description: Nombre total de trébuchements à la corde.
+  - name: totalTime
+    mode: NULLABLE
+    type: INTEGER
+    description: Temps total (en secondes).
+  - name: totalWeight
+    mode: NULLABLE
+    type: INTEGER
+    description: Poids total (en grammes).
+  - name: trainType
+    mode: NULLABLE
+    type: INTEGER
+    description: Type d'entraînement (valeur numérique).
+  - name: trainingLoad
+    mode: NULLABLE
+    type: INTEGER
+    description: Charge d'entraînement.
+  - name: unitType
+    mode: NULLABLE
+    type: INTEGER
+    description: Type d'unité (valeur numérique).
+  - name: userChangeDistance
+    mode: NULLABLE
+    type: INTEGER
+    description: Distance modifiée par l'utilisateur (en cm).
+  - name: userId
+    mode: NULLABLE
+    type: STRING
+    description: Identifiant de l'utilisateur.
+  - name: vertSpeed
+    mode: NULLABLE
+    type: FLOAT
+    description: Vitesse verticale (en cm/s).
+  - name: waterTemperature
+    mode: NULLABLE
+    type: INTEGER
+    description: Température de l'eau (en centièmes de °C).
+  - name: work
+    mode: NULLABLE
+    type: INTEGER
+    description: Travail (en joules).
+  - name: workoutTime
+    mode: NULLABLE
+    type: INTEGER
+    description: Temps d'entraînement (en secondes).
+  - name: metadata
+    type: JSON
+    mode: REQUIRED
+    description: Metadata representing the API call.

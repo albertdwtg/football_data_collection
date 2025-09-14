@@ -3,9 +3,9 @@
 import requests
 
 from utils.exceptions import BadRequestError
+from utils.models import InputRequest
 
-
-def input_request_checker(request: requests.request):
+def input_request_checker(request: requests.request) -> None:
     """Function that checks if input request is valid
 
     Args:
@@ -20,7 +20,7 @@ def input_request_checker(request: requests.request):
     if request.headers.get("Content-Type") != "application/json":
         raise BadRequestError("'application/json' is the only content authorized")
 
-def args_validator(request_body: dict):
+def args_validator(request_body: dict) -> None:
     """Function that checks if input request body
     respect format
 
@@ -30,7 +30,5 @@ def args_validator(request_body: dict):
     Raises:
         BadRequestError: if a condition is not met
     """
-    mandatory_keys = ["account"]
-    for key in mandatory_keys:
-        if key not in request_body:
-            raise BadRequestError(f"'{key}' is a mandatory input key")
+    # Validate the request body against the InputRequest model
+    InputRequest.model_validate(request_body)

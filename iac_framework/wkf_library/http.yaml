@@ -7,7 +7,7 @@ http_call:
     - headers: null
     - body: null
     - query: null
-    - timeout: 10
+    - timeout: 300
   steps:
     - make_request:
         call: http.request

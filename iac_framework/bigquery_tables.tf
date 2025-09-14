@@ -34,7 +34,7 @@ locals {
 
 resource "google_bigquery_table" "tables" {
   for_each                 = local.tables_configs
-  project                  = var.project
+  project                  = try(each.value.content.project, var.project)
   table_id                 = "${each.value.content.table_id}_v${each.value.content.version}"
   dataset_id               = each.value.content.dataset_id
   description              = each.value.content.description
@@ -66,8 +66,8 @@ resource "google_bigquery_table" "tables" {
 
   lifecycle {
     precondition {
-      condition     = endswith(each.key, "v${each.value.content.version}")
-      error_message = "File name must end with same version as defined in 'version' field"
+      condition     = each.key == "${each.value.content.table_id}_v${each.value.content.version}"
+      error_message = "File name must match table name and version"
     }
     precondition {
       condition     = length(each.value.content.description) > 5

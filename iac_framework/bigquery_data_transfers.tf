@@ -47,11 +47,12 @@ locals {
 resource "google_bigquery_data_transfer_config" "data_transfers" {
   for_each               = local.dts_configs
   display_name           = "${var.product_name}_dts_${each.value.base_name}_${var.region_id}_${var.env}"
-  project                = var.project
+  project                = try(each.value.content.project, var.project)
   location               = var.region
   data_source_id         = try(each.value.content.data_source_id, null)
   destination_dataset_id = try(each.value.content.destination_dataset_id, null)
   service_account_name   = google_service_account.execution_sa.email
+  schedule               = try(each.value.content.schedule, null)
   params = {
     destination_table_name_template = try(each.value.content.params.destination_table_name_template, null)
     data_path_template              = try(each.value.content.params.data_path_template, null)
@@ -63,6 +64,11 @@ resource "google_bigquery_data_transfer_config" "data_transfers" {
     use_avro_logical_types          = try(each.value.content.params.use_avro_logical_types, null)
     parquet_enum_as_string          = try(each.value.content.params.parquet_enum_as_string, null)
     delete_source_files             = try(each.value.content.params.delete_source_files, null)
+  }
+  schedule_options {
+    disable_auto_scheduling = try(each.value.content.schedule_options.disable_auto_scheduling, true)
+    start_time              = try(each.value.content.schedule_options.start_time, null)
+    end_time                = try(each.value.content.schedule_options.end_time, null)
   }
   depends_on = [google_bigquery_dataset.datasets, google_bigquery_table.tables, google_storage_bucket.buckets, google_service_account.execution_sa]
 }

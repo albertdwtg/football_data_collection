@@ -17,7 +17,9 @@ NB_CALLS_BEFORE_ROTATION = 3
 class Scraper:
     """Objects handling generic calls and responses to APIs"""
 
-    def __init__(self):
+    def __init__(self) -> None:
+        """Init of the Scraper object
+        """
         self.user_agent = secrets.choice(POSSIBLE_USER_AGENTS)
         self.browser = secrets.choice(POSSIBLE_BROWSERS)
         self.nb_calls = 0
@@ -31,7 +33,7 @@ class Scraper:
         self, method: str, url: str,
         query_params: Optional[dict] = None, body: Optional[dict] = None,
         headers: Optional[dict] = None
-    ):
+    ) -> dict:
         """Function making HTTP request and handling JSON response
 
         Args:
@@ -45,7 +47,7 @@ class Scraper:
             BadResponseError: If response is not what is expected
 
         Returns:
-            _type_: _description_
+            Dict: JSON response
         """
         if headers is None:
             headers = {"User-Agent": self.user_agent}
@@ -76,7 +78,7 @@ class Scraper:
             raise BadResponseError(f"Bad response : {response.text}")
         return json_response
 
-    def _update_attributes(self):
+    def _update_attributes(self) -> None:
         """Function to update attributes of the scraper
         to avoid being blocked by the API
         """

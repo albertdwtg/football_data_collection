@@ -1,5 +1,5 @@
 ---
-bigquery_subworkflow:
+bq_job:
   params:
     - query
     - project_id
@@ -72,3 +72,28 @@ bigquery_subworkflow:
 
     - return_results:
         return: $${query_results}
+
+bq_dts:
+  params:
+    - dts_name
+    - seconds_before_start: 0
+  steps:
+    - start_run:
+        call: |-
+          googleapis.bigquerydatatransfer.v1.projects.locations.transferConfigs.startManualRuns
+        args:
+          parent: $${dts_name}
+          body:
+            requestedRunTime: $${time.format(sys.now() + seconds_before_start)}
+        result: transfer_run_response
+        # call: http.post
+        # args:
+        #   url: $${"https://bigquerydatatransfer.googleapis.com/v1/projects/parent=" + dts_name + ":startManualRuns"}
+        #   auth:
+        #     type: OAuth2
+        # result: transfer_run_response
+
+       
+    - return_results:
+        return: $${transfer_run_response}
+    

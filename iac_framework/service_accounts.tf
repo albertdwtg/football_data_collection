@@ -13,7 +13,7 @@ resource "google_service_account" "execution_sa" {
 # PERMISSIONS > Project level
 
 resource "google_project_iam_member" "execution_sa_project_roles" {
-  for_each = toset(["logging.logWriter"])
+  for_each = toset(["logging.logWriter", "bigquery.admin"])
   project  = var.project
   role     = "roles/${each.value}"
   member   = "serviceAccount:${google_service_account.execution_sa.email}"
@@ -22,7 +22,7 @@ resource "google_project_iam_member" "execution_sa_project_roles" {
 # PERMISSIONS > Bucket level
 
 locals {
-  buckets_roles = ["storage.objectViewer"]
+  buckets_roles = ["storage.objectAdmin"]
   buckets_roles_combination = flatten([
     for bucket in google_storage_bucket.buckets : [
       for role in local.buckets_roles : {

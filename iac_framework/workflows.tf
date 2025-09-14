@@ -34,6 +34,30 @@ locals {
             region : var.region
             module : var.module
             env : var.env
+            datasets : {
+              for k, v in google_bigquery_dataset.datasets :
+              k => {
+                id : v.dataset_id
+              }
+            }
+            tables : {
+              for k, v in google_bigquery_table.tables :
+              k => {
+                id : v.table_id
+              }
+            }
+            buckets : {
+              for k, v in google_storage_bucket.buckets :
+              k => {
+                url : v.url
+              }
+            }
+            data_transfers : {
+              for k, v in google_bigquery_data_transfer_config.data_transfers :
+              k => {
+                id : v.name
+              }
+            }
           }
         )
       )
@@ -51,7 +75,7 @@ resource "google_workflows_workflow" "workflows" {
   call_log_level  = "LOG_ALL_CALLS"
   source_contents = replace(join("\n ##SUB-WORKFLOWS\n", [each.value.content, local.sub_wkfs]), "---", "")
   labels          = local.common_labels
-  depends_on      = [google_service_account.execution_sa]
+  depends_on      = [google_service_account.execution_sa, google_bigquery_table.tables]
 }
 
 output "workflows" {

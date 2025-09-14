@@ -30,16 +30,6 @@ resource "google_cloudfunctions2_function" "function" {
   }
 }
 
-# data "google_service_account" "execution_sa" {
-#   account_id = join("-", [
-#     var.product_name,
-#     "execution",
-#     "sa",
-#     var.module,
-#     var.env
-#   ])
-# }
-
 resource "google_cloud_run_service_iam_member" "invoker_permission" {
   location = google_cloudfunctions2_function.function.location
   project  = google_cloudfunctions2_function.function.project

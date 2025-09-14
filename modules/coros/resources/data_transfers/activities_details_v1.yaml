@@ -1,0 +1,9 @@
+---
+data_source_id: google_cloud_storage
+destination_dataset_id: ${datasets["coros"].id}
+params:
+  destination_table_name_template: ${tables["activities_details_v1"].id}
+  write_disposition: APPEND
+  file_format: JSON
+  data_path_template: ${buckets["coros"].url}/activities_details/*/*.json
+  delete_soure_files: true

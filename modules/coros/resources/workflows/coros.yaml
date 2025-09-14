@@ -7,6 +7,20 @@ main:
         call: http_call
         args:
           method: POST
+          headers:
+            Content-Type: application/json
           url: ${module-gcf-url}
           auth:
             type: OIDC
+          body:
+            account: dewatrigant.albert@gmail.com
+            from_date: 20250713
+            to_date: 20250713
+        result: coros_response
+
+    - load_to_bq:
+        call: bq_dts
+        args:
+          dts_name: ${data_transfers["activities_details_v1"].id}
+        result: bq_dts_response
+  

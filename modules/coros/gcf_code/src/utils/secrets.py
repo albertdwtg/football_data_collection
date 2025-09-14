@@ -1,8 +1,10 @@
+"""Module to handle secrets in Google Cloud Secret Manager."""
+
 from google.cloud import secretmanager
 from google.api_core.exceptions import NotFound
 from utils.exceptions import SecretNotFoundError
 
-def get_secret(project_id, secret_id, version_id="latest"):
+def get_secret(project_id: str, secret_id: str, version_id: str ="latest") -> str:
     """
     Retrieves a secret from Google Cloud Secret Manager.
 

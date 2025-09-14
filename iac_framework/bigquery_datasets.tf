@@ -29,7 +29,7 @@ locals {
 resource "google_bigquery_dataset" "datasets" {
   for_each                        = local.ds_configs
   dataset_id                      = "${var.product_name}_${each.value.base_name}_${var.region_id}_${var.env}"
-  project                         = var.project
+  project                         = try(each.value.content.project, var.project)
   friendly_name                   = try(each.value.content.friendly_name, null)
   description                     = try(each.value.content.description, null)
   location                        = try(each.value.content.location, var.region)

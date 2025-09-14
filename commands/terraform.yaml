@@ -40,9 +40,9 @@ tasks:
     desc: Check yaml syntax
     internal: true
     cmds:
-      - yamllint ./iac_framework
+      - yamllint -c {{.ROOT}}/commands/configs/yamllint.yaml ./iac_framework
       - eval "echo '[{{.TASK}}] --> Checking yaml syntax in $(cat {{.MODULE_DIR_LOCATION}})'"
-      - yamllint $(cat {{.MODULE_DIR_LOCATION}})
+      - yamllint -c {{.ROOT}}/commands/configs/yamllint.yaml $(cat {{.MODULE_DIR_LOCATION}})
 
   tf-cicd:
     desc: Run linter and deployment of infra
